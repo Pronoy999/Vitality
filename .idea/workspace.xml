@@ -5,19 +5,64 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/controllers/PatientController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/entities/Patients.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/repositories/PatientRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/service/PatientService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-common/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/dtos/CreatePatientRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/dtos/CreatePatientResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/Constants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/GuidUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_medical_facilities.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patients.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_prescription_orders.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_roles_master.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_users.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vitality-api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-api/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="Record" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Pronoy999&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Pronoy999/Vitality.git&quot;,
+    &quot;accountId&quot;: &quot;919e038c-b309-4d58-887b-1e3034c94797&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="36FAs9Fp2cpnnavL3n1rgjossT4" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -26,13 +71,51 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.VitalityApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="VitalityApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="vitality-api" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.vitality.api.VitalityApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.vitality.api.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.VitalityApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -49,11 +132,31 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1764592151145</updated>
-      <workItem from="1764592152139" duration="1000" />
+      <workItem from="1764592152139" duration="2521000" />
+      <workItem from="1764594686980" duration="148000" />
+      <workItem from="1764594840359" duration="1584000" />
+      <workItem from="1764604288794" duration="2000" />
+      <workItem from="1765017034072" duration="3350000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/service/PatientService.java</url>
+          <line>27</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/service/PatientService.java</url>
+          <line>48</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
