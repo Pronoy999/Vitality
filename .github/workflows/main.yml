@@ -54,11 +54,11 @@ jobs:
         run: npm install -g @angular/cli
 
       - name: Install dependencies
-        working-directory: ./fin-sight-ui
+        working-directory: ./vitality-ui
         run: npm install
 
       - name: Build Angular project
-        working-directory: ./fin-sight-ui
+        working-directory: ./vitality-ui
         run: ng build
   deploy-angular:
     needs: build-angular
