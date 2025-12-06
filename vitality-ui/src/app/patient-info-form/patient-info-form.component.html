@@ -1,0 +1,88 @@
+<div class="vitality-form-card p-5">
+    <h2>Patient Information Form</h2>
+
+    <form [formGroup]="patientInfoForm" class="vitality-form" autocomplete="off" (ngSubmit)="patientInfoFormSubmit()">
+
+        <mat-form-field class="w-100">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phoneNumber" required type="tel" pattern="[0-9]{10}" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Age</mat-label>
+            <input matInput formControlName="age" required type="number" min="0" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Height (in cms)</mat-label>
+            <input matInput formControlName="height" type="number" min="0" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Weight (in kgs)</mat-label>
+            <input matInput formControlName="weight" type="number" min="0" />
+        </mat-form-field>
+
+        <div class="w-100 form-group">
+            <label class="mat-label">Gender</label>
+            <mat-radio-group formControlName="gender" class="gender-group">
+                <mat-radio-button value="Male">Male</mat-radio-button>
+                <mat-radio-button value="Female">Female</mat-radio-button>
+                <mat-radio-button value="Prefer not to say">Prefer not to say</mat-radio-button>
+                <mat-radio-button value="Others">Others</mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <mat-form-field class="w-100">
+            <mat-label>Blood Pressure (Systolic/Diastolic)</mat-label>
+            <textarea matInput formControlName="bloodPressure" rows="1"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Ailment History</mat-label>
+            <textarea matInput formControlName="ailmentHistory" rows="2"></textarea>
+        </mat-form-field>
+
+        <div class="w-100 form-group">
+            <label class="mat-label">Do you have health insurance?</label>
+            <mat-radio-group formControlName="hasHealthInsurance" class="insurance-group">
+                <mat-radio-button [value]="true">Yes</mat-radio-button>
+                <mat-radio-button [value]="false">No</mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <mat-form-field class="w-100">
+            <mat-label>Abha ID</mat-label>
+            <input matInput formControlName="abhaId" type="text" />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Additional Diagnosis</mat-label>
+            <textarea matInput formControlName="additionalDiagnosis" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Medicines Consumed</mat-label>
+            <textarea matInput formControlName="medicinesConsumed" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+            <mat-label>Additional Services Required</mat-label>
+            <textarea matInput formControlName="additionalServicesRequired" rows="2"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions text-center">
+            <button mat-flat-button color="primary" type="submit" class="submit-button" style="width: 150px;">Submit</button>
+        </div>
+    </form>
+</div>

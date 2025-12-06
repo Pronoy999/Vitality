@@ -1,0 +1,16 @@
+.vitality-hero {
+    background: white;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    z-index: 9;
+    top: 0;
+}
+
+.vitality-logo {
+    width: 80px;
+}
+
+.vitality-illustration {
+    background-image: linear-gradient(to bottom right, #add8e6 0%, #e0ffff 50%, #ffffff 100%);
+}
