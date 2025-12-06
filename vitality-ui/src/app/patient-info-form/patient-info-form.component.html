@@ -2,7 +2,6 @@
     <h2>Patient Information Form</h2>
 
     <form [formGroup]="patientInfoForm" class="vitality-form" autocomplete="off" (ngSubmit)="patientInfoFormSubmit()">
-
         <mat-form-field class="w-100">
             <mat-label>Name</mat-label>
             <input matInput formControlName="name" required />
