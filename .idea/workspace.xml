@@ -4,28 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/controllers/PatientController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/entities/Patients.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/repositories/PatientRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/service/PatientService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-common/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/dtos/CreatePatientRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/dtos/CreatePatientResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/Constants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/GuidUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_medical_facilities.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patients.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_prescription_orders.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_roles_master.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_users.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitality-api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-api/pom.xml" afterDir="false" />
+    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add create patient controller and service.">
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/config/VitalityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patients.sql" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patients.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,12 +17,17 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="Record" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Pronoy Mukherjee &lt;mukherjee_pronoy@yahoo.in&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -77,7 +63,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.VitalityApplication.executor": "Run",
+    "Spring Boot.VitalityApplication.executor": "Debug",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -136,12 +122,25 @@
       <workItem from="1764594686980" duration="148000" />
       <workItem from="1764594840359" duration="1584000" />
       <workItem from="1764604288794" duration="2000" />
-      <workItem from="1765017034072" duration="3350000" />
+      <workItem from="1765017034072" duration="3669000" />
     </task>
+    <task id="LOCAL-00001" summary="Add create patient controller and service.">
+      <option name="closed" value="true" />
+      <created>1765020455772</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1765020455773</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add create patient controller and service." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add create patient controller and service." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
