@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add docker file and CORS configs." />
+    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Fix the Angular Build job.">
+      <change afterPath="$PROJECT_DIR$/vitality-ui/Dockerfile" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -119,7 +121,7 @@
       <workItem from="1764594686980" duration="148000" />
       <workItem from="1764594840359" duration="1584000" />
       <workItem from="1764604288794" duration="2000" />
-      <workItem from="1765017034072" duration="4263000" />
+      <workItem from="1765017034072" duration="4790000" />
     </task>
     <task id="LOCAL-00001" summary="Add create patient controller and service.">
       <option name="closed" value="true" />
@@ -137,7 +139,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765020843662</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fix the Angular Build job.">
+      <option name="closed" value="true" />
+      <created>1765021563043</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1765021563043</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,7 +156,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add create patient controller and service." />
     <MESSAGE value="Add docker file and CORS configs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add docker file and CORS configs." />
+    <MESSAGE value="Fix the Angular Build job." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix the Angular Build job." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
