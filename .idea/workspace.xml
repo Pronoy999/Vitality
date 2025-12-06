@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add create patient controller and service.">
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/config/VitalityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patients.sql" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patients.sql" afterDir="false" />
-    </list>
+    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add docker file and CORS configs." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,7 +60,7 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.VitalityApplication.executor": "Debug",
+    "Spring Boot.VitalityApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -122,7 +119,7 @@
       <workItem from="1764594686980" duration="148000" />
       <workItem from="1764594840359" duration="1584000" />
       <workItem from="1764604288794" duration="2000" />
-      <workItem from="1765017034072" duration="3669000" />
+      <workItem from="1765017034072" duration="4263000" />
     </task>
     <task id="LOCAL-00001" summary="Add create patient controller and service.">
       <option name="closed" value="true" />
@@ -132,7 +129,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765020455773</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add docker file and CORS configs.">
+      <option name="closed" value="true" />
+      <created>1765020843662</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1765020843662</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -140,7 +145,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add create patient controller and service." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add create patient controller and service." />
+    <MESSAGE value="Add docker file and CORS configs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add docker file and CORS configs." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
