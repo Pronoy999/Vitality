@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
     templateUrl: './patient-info-form.component.html',
     styleUrls: ['./patient-info-form.component.scss']
 })
+
 export class PatientInfoFormComponent {
     patientInfoForm: FormGroup;
 
