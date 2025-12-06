@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Fix the Angular Build job.">
-      <change afterPath="$PROJECT_DIR$/vitality-ui/Dockerfile" afterDir="false" />
+    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add Docker Manifest entry.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vitality-ui/src/app/patient-info-form/patient-info-form.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-ui/src/app/patient-info-form/patient-info-form.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +74,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
+    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -121,7 +123,7 @@
       <workItem from="1764594686980" duration="148000" />
       <workItem from="1764594840359" duration="1584000" />
       <workItem from="1764604288794" duration="2000" />
-      <workItem from="1765017034072" duration="4790000" />
+      <workItem from="1765017034072" duration="6292000" />
     </task>
     <task id="LOCAL-00001" summary="Add create patient controller and service.">
       <option name="closed" value="true" />
@@ -147,7 +149,31 @@
       <option name="project" value="LOCAL" />
       <updated>1765021563043</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Add angular Docker file.">
+      <option name="closed" value="true" />
+      <created>1765021937318</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1765021937318</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fix Angular Docker file.">
+      <option name="closed" value="true" />
+      <created>1765022071562</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1765022071562</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add Docker Manifest entry.">
+      <option name="closed" value="true" />
+      <created>1765022714378</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1765022714378</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,7 +183,10 @@
     <MESSAGE value="Add create patient controller and service." />
     <MESSAGE value="Add docker file and CORS configs." />
     <MESSAGE value="Fix the Angular Build job." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix the Angular Build job." />
+    <MESSAGE value="Add angular Docker file." />
+    <MESSAGE value="Fix Angular Docker file." />
+    <MESSAGE value="Add Docker Manifest entry." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Docker Manifest entry." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

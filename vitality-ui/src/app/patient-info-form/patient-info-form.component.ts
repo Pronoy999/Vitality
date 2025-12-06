@@ -45,7 +45,7 @@ export class PatientInfoFormComponent {
     }
 
     private httpPostPatientInfo(patientData: any): void {
-        const url = 'http://192.168.1.17:8080/api/v1/vitality/patient';
+        const url = 'http://122.166.244.91:8080/api/v1/vitality/patient';
         this.http.post(url, patientData).subscribe(
             (response) => {
                 console.log('POST request successful:', response);
