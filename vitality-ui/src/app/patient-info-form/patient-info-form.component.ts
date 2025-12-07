@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-patient-info-form',
@@ -15,7 +16,10 @@ import { HttpClient } from '@angular/common/http';
 export class PatientInfoFormComponent {
     patientInfoForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private http: HttpClient) {
+    constructor(private fb: FormBuilder,
+        private http: HttpClient,
+        private toastr: ToastrService) {
+
         this.patientInfoForm = this.fb.group({
             name: ['', Validators.required],
             phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
@@ -49,11 +53,12 @@ export class PatientInfoFormComponent {
         this.http.post(url, patientData).subscribe(
             (response) => {
                 console.log('POST request successful:', response);
+                this.toastr.success('The record was saved successfully.', 'Success!');
                 // Handle the successful response
             },
             (error) => {
                 console.error('POST request failed:', error);
-                // Handle the error
+                this.toastr.error('Failed to save the record', 'Error');
             }
         );
     }
