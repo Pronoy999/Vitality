@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Update the URL.">
+    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add CORS Url for Static IP.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/config/VitalityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/config/VitalityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vitality-ui/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-ui/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +124,7 @@
       <workItem from="1764594840359" duration="1584000" />
       <workItem from="1764604288794" duration="2000" />
       <workItem from="1765017034072" duration="6658000" />
-      <workItem from="1765080575887" duration="583000" />
+      <workItem from="1765080575887" duration="1287000" />
     </task>
     <task id="LOCAL-00001" summary="Add create patient controller and service.">
       <option name="closed" value="true" />
@@ -182,7 +182,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765023496436</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Add CORS Url for Static IP.">
+      <option name="closed" value="true" />
+      <created>1765081199136</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1765081199136</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -196,7 +204,8 @@
     <MESSAGE value="Fix Angular Docker file." />
     <MESSAGE value="Add Docker Manifest entry." />
     <MESSAGE value="Update the URL." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update the URL." />
+    <MESSAGE value="Add CORS Url for Static IP." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add CORS Url for Static IP." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

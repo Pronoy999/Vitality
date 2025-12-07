@@ -4,4 +4,4 @@ COPY . .
 RUN npm install && npm run build
 
 FROM nginx:alpine
-COPY --from=build /app/dist/vitality-ui /usr/share/nginx/html
+COPY --from=build /app/dist/vitality-ui/browser /usr/share/nginx/html
