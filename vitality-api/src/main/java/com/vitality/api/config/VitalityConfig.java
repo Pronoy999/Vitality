@@ -10,6 +10,7 @@ public class VitalityConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // apply to all routes
                 .allowedOrigins("http://localhost:4200") // allow Angular frontend
+                .allowedOrigins("http://122.166.244.91:4200") // allow Angular frontend
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
