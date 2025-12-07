@@ -54,6 +54,8 @@ export class PatientInfoFormComponent {
             (response) => {
                 console.log('POST request successful:', response);
                 this.toastr.success('The record was saved successfully.', 'Success!');
+                this.patientInfoForm.reset();
+                this.patientInfoForm.markAsUntouched();
                 // Handle the successful response
             },
             (error) => {
