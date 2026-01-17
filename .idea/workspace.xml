@@ -4,20 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add global_sid sequence.">
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/entities/AilmentType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/entities/MedicinesConsumed.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/entities/PatientAilments.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_ailment_type_master.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_medicines_consumed.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patient_ailments.sql" afterDir="false" />
+    <list default="true" id="9d5fdf6b-8f43-4235-84a4-bb8d8f96ef8c" name="Changes" comment="Add twilio properties.">
+      <change afterPath="$PROJECT_DIR$/vitality-api/src/main/java/com/vitality/api/entities/Otp.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/OtpGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_otp.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitality-api/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-api/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vitality-api/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-api/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vitality-common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-common/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitality-database/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-database/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patient_vitals.sql" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-database/src/main/java/com/vitality/database/tbl_patient_vitals.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/MessagingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/vitality-common/src/main/java/com/vitality/common/utils/MessagingUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,6 +86,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
     "ts.external.directory.path": "/Users/promukhe/Documents/Work/Repositories/Vitality/vitality-ui/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   },
@@ -144,7 +140,7 @@
       <workItem from="1765080575887" duration="3244000" />
       <workItem from="1765197272754" duration="1048000" />
       <workItem from="1767425148381" duration="1294000" />
-      <workItem from="1768653594000" duration="5307000" />
+      <workItem from="1768653594000" duration="7918000" />
     </task>
     <task id="LOCAL-00001" summary="Add create patient controller and service.">
       <option name="closed" value="true" />
@@ -226,7 +222,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768654109355</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Add Twilio dependency and entities.">
+      <option name="closed" value="true" />
+      <created>1768658959046</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1768658959046</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Add twilio properties.">
+      <option name="closed" value="true" />
+      <created>1768659031812</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1768659031812</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -243,7 +255,9 @@
     <MESSAGE value="Add CORS Url for Static IP." />
     <MESSAGE value="Fix the Docker file to update the dist copy location." />
     <MESSAGE value="Add global_sid sequence." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add global_sid sequence." />
+    <MESSAGE value="Add Twilio dependency and entities." />
+    <MESSAGE value="Add twilio properties." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add twilio properties." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
