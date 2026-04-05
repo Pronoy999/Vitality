@@ -1,0 +1,98 @@
+{
+  "patient_name": "Mr. Amitabha Mukhopadhyay",
+  "patient_age": "28 yr",
+  "doctor_name": "Dr. Soumik Baraman?",
+  "date": "2026-03-10",
+  "patient_issue": "B/L consolidation, swelling of spleen?, assessment AKI, cellulitis hands reduced",
+  "diagnosis": "AKI, cellulitis hands reduced, B/L consolidation",
+  "health_metrics": {
+    "SpO2": "85-90%",
+    "BP": "160/90 mmHg",
+    "Hb": "9.1",
+    "TLC": "24.2?",
+    "Platelets": "Normal",
+    "SGOT": "29",
+    "Albumin": "2.57",
+    "Urea": "77",
+    "Creatinine": "0.86",
+    "Na": "148",
+    "K": "6.42",
+    "K_repeat": "2.7"
+  },
+  "medicines": [
+    {
+      "name": "Stanzio",
+      "dosage": "200 mg OD 9am x 12 days"
+    },
+    {
+      "name": "Wysolone",
+      "dosage": "taper down"
+    },
+    {
+      "name": "Racigift syrup",
+      "dosage": "10 ml BD before meals"
+    },
+    {
+      "name": "Sompraz",
+      "dosage": "40 mg OD BBF"
+    },
+    {
+      "name": "Duolin LD neb",
+      "dosage": "(2.5) TDS 8am-2pm-8pm"
+    },
+    {
+      "name": "Foracort neb",
+      "dosage": "(0.5) BD 10am-10pm"
+    },
+    {
+      "name": "Solspre NS?",
+      "dosage": "1 puff each nostril BD"
+    },
+    {
+      "name": "Rejunex CD3",
+      "dosage": "OD at bedtime"
+    },
+    {
+      "name": "Novostat",
+      "dosage": "10 mg 1 tab OD at bedtime"
+    },
+    {
+      "name": "Cilacar",
+      "dosage": "10 mg 1 tab OD after breakfast"
+    },
+    {
+      "name": "Placentrex gel",
+      "dosage": "apply locally OD at 10am"
+    },
+    {
+      "name": "Candid powder",
+      "dosage": "to use"
+    },
+    {
+      "name": "Mucinac",
+      "dosage": "600 mg 1 tab BD 10am-8pm"
+    },
+    {
+      "name": "Candid mouth paint",
+      "dosage": "apply locally inside mouth"
+    },
+    {
+      "name": "Rifagut",
+      "dosage": "550 mg 1 tab BD 9am-9pm x 7 days"
+    },
+    {
+      "name": "Econorm sachet",
+      "dosage": "thrice daily x 5 days"
+    },
+    {
+      "name": "Metrogyl ER",
+      "dosage": "600 mg 1 tab BD x 5 days"
+    },
+    {
+      "name": "Nephro HP",
+      "dosage": "2 scoops BD with lukewarm water"
+    }
+  ]
+}
+
+

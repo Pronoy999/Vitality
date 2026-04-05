@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AxonIQ LLP — System Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1923;
+    --ink2: #1e2d3d;
+    --blue: #1a4fa0;
+    --blue-mid: #2563b0;
+    --blue-light: #dbeafe;
+    --teal: #0e7490;
+    --teal-light: #cffafe;
+    --green: #15803d;
+    --green-light: #dcfce7;
+    --amber: #b45309;
+    --amber-light: #fef3c7;
+    --rose: #be123c;
+    --rose-light: #ffe4e6;
+    --violet: #6d28d9;
+    --violet-light: #ede9fe;
+    --paper: #f8f9fc;
+    --rule: #e2e8f0;
+    --white: #ffffff;
+    --text: #374151;
+    --text-light: #6b7280;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--ink);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--blue-mid);
+  }
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+  }
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+  .nav-brand span { color: #60a5fa; }
+  .nav-tabs { display: flex; gap: 0; }
+  .nav-tab {
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #94a3b8;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: -3px;
+  }
+  .nav-tab:hover { color: var(--white); }
+  .nav-tab.active { color: #60a5fa; border-bottom-color: #60a5fa; }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .page-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 36px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* OVERVIEW CARDS */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .unit-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px 22px;
+    border-left: 4px solid var(--blue-mid);
+    transition: box-shadow 0.2s;
+  }
+  .unit-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .unit-card.teal { border-left-color: var(--teal); }
+  .unit-card.green { border-left-color: var(--green); }
+  .unit-card.violet { border-left-color: var(--violet); }
+  .unit-card.amber { border-left-color: var(--amber); }
+  .unit-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .unit-parent {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+  .unit-desc {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* FLOW DIAGRAM */
+  .flow-container {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 32px;
+    overflow-x: auto;
+  }
+  .flow-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-light);
+    margin-bottom: 28px;
+  }
+
+  /* SVG Flow */
+  .flow-svg { min-width: 900px; width: 100%; }
+
+  /* NODE STYLES */
+  .node-box {
+    rx: 8;
+    ry: 8;
+  }
+  .node-text { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; fill: #fff; }
+  .node-sub { font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 400; fill: rgba(255,255,255,0.8); }
+  .node-diamond { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; fill: #1e2d3d; }
+  .arrow { stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); }
+  .arrow-label { font-family: 'DM Sans', sans-serif; font-size: 10px; fill: #6b7280; }
+  .lane-label { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; fill: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; }
+  .lane-bg { rx: 6; ry: 6; }
+
+  /* ER DIAGRAM */
+  .er-container {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 32px;
+    overflow-x: auto;
+    margin-top: 24px;
+  }
+
+  .er-table {
+    background: var(--white);
+  }
+  .er-header { font-weight: 700; font-size: 12px; }
+  .er-field { font-size: 11px; font-family: 'DM Mono', monospace; }
+  .er-pk { fill: var(--amber); font-weight: 600; }
+  .er-fk { fill: var(--blue-mid); }
+  .er-rel { stroke-width: 1.5; stroke-dasharray: none; }
+  .er-rel-dashed { stroke-width: 1.5; stroke-dasharray: 5,3; }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-light);
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* NON-TECH SECTION */
+  .plain-section { margin-bottom: 32px; }
+  .plain-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .plain-lead {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--blue-mid);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 700; font-size: 14px; color: var(--ink); margin-bottom: 3px; }
+  .step-desc { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .step-who {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .callout {
+    background: var(--blue-light);
+    border-left: 4px solid var(--blue-mid);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+  .callout strong { color: var(--blue); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .info-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .info-card h4 { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .info-card ul { list-style: none; padding: 0; }
+  .info-card ul li {
+    font-size: 13px;
+    color: var(--text);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 8px;
+  }
+  .info-card ul li:last-child { border-bottom: none; }
+  .info-card ul li::before { content: '→'; color: var(--blue-mid); font-weight: 700; flex-shrink: 0; }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-left: 6px;
+  }
+  .tag-blue { background: var(--blue-light); color: var(--blue); }
+  .tag-green { background: var(--green-light); color: var(--green); }
+  .tag-amber { background: var(--amber-light); color: var(--amber); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">Axon<span>IQ</span> LLP</div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="showTab('overview')">Overview</div>
+      <div class="nav-tab" onclick="showTab('flow')">Customer Journey</div>
+      <div class="nav-tab" onclick="showTab('ops')">Ops Flow</div>
+      <div class="nav-tab" onclick="showTab('er')">Data Model</div>
+      <div class="nav-tab" onclick="showTab('plain')">Plain English</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ OVERVIEW -->
+<div class="section active" id="tab-overview">
+  <div class="page-wrap">
+    <div class="page-title">AxonIQ LLP — System Overview</div>
+    <div class="page-subtitle">One holding entity, four operating units, one tech platform connecting them all</div>
+
+    <div class="overview-grid">
+      <div class="unit-card">
+        <div class="unit-name">AxonIQ LLP</div>
+        <div class="unit-parent">Holding Entity</div>
+        <div class="unit-desc">The legal and financial parent. Owns all IP, holds the drug license, and is the contracting entity for supplier and client agreements.</div>
+      </div>
+      <div class="unit-card">
+        <div class="unit-name">Vitality Health</div>
+        <div class="unit-parent">Unit of AxonIQ LLP · Medicines & Surgical</div>
+        <div class="unit-desc">Sells and delivers medicines and surgical consumables directly to patients at competitive prices. Primary Phase 1 revenue engine.</div>
+      </div>
+      <div class="unit-card teal">
+        <div class="unit-name">AxonIQ Equipment</div>
+        <div class="unit-parent">Unit of AxonIQ LLP · Medical Equipment</div>
+        <div class="unit-desc">Rental, subletting, and sale of larger medical equipment — oxygen concentrators, hospital beds, mobility aids. B2B and B2C.</div>
+      </div>
+      <div class="unit-card green">
+        <div class="unit-name">AxonIQ Therapies</div>
+        <div class="unit-parent">Unit of AxonIQ LLP · Therapy Clinics</div>
+        <div class="unit-desc">Operates clinics for physiotherapy, occupational therapy, and speech therapy. Generates recurring appointment-based revenue.</div>
+      </div>
+      <div class="unit-card violet">
+        <div class="unit-name">Enzo by AxonIQ</div>
+        <div class="unit-parent">Tech Product · All Units</div>
+        <div class="unit-desc">The unified software platform. enzoRx (digital prescription), enzoOps (order management), enzoHealth (patient data), enzoInsights (analytics). Connects all units and supply chain actors.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The core logic:</strong> Each unit independently generates revenue and captures health data as a byproduct of its operations. Enzo is the thread that connects patient data across all three units — a patient who buys medicines through Vitality Health, rents an oxygen concentrator, and attends physiotherapy sessions has their entire care journey in one place. That consolidated dataset is the long-term strategic asset.
+    </div>
+
+    <div class="two-col">
+      <div class="info-card">
+        <h4>What the System Must Do — Phase 1</h4>
+        <ul>
+          <li>Identify and track a sales opportunity (Opportunity ID)</li>
+          <li>Record who originated the lead (Originator)</li>
+          <li>Capture patient and client information</li>
+          <li>Match patient needs to products/services</li>
+          <li>Manage the order, procurement, and fulfilment</li>
+          <li>Generate bills and financial reports</li>
+          <li>Store structured health data with consent</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h4>What It Becomes — Phase 3+</h4>
+        <ul>
+          <li>AI-driven product recommendation per patient profile</li>
+          <li>Procurement intelligence (predict what to buy and when)</li>
+          <li>Drug contradiction and adherence monitoring</li>
+          <li>Doctor-facing clinical decision support (enzoRx)</li>
+          <li>Anonymised population health analytics for pharma</li>
+          <li>Fine-tuned LLMs on Indian health data</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ CUSTOMER JOURNEY FLOW -->
+<div class="section" id="tab-flow">
+  <div class="page-wrap">
+    <div class="page-title">Customer Journey Flow</div>
+    <div class="page-subtitle">From the moment a lead enters the system to the moment an order is fulfilled and health data is stored</div>
+
+    <div class="flow-container">
+      <div class="flow-title">End-to-End: Opportunity → Fulfilment → Data</div>
+      <svg class="flow-svg" viewBox="0 0 1100 900" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+          </marker>
+          <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#2563b0"/>
+          </marker>
+          <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#15803d"/>
+          </marker>
+          <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#be123c"/>
+          </marker>
+        </defs>
+
+        <!-- LANE BACKGROUNDS -->
+        <rect x="10" y="50" width="330" height="820" rx="8" fill="#f0f4ff" opacity="0.5"/>
+        <rect x="350" y="50" width="230" height="820" rx="8" fill="#f0fdf4" opacity="0.5"/>
+        <rect x="590" y="50" width="230" height="820" rx="8" fill="#fffbeb" opacity="0.5"/>
+        <rect x="830" y="50" width="260" height="820" rx="8" fill="#f5f3ff" opacity="0.5"/>
+
+        <!-- LANE HEADERS -->
+        <text x="175" y="38" text-anchor="middle" class="lane-label" fill="#1a4fa0">LEAD & PATIENT</text>
+        <text x="465" y="38" text-anchor="middle" class="lane-label" fill="#15803d">PRODUCT MATCH</text>
+        <text x="705" y="38" text-anchor="middle" class="lane-label" fill="#b45309">ORDER & PROCURE</text>
+        <text x="960" y="38" text-anchor="middle" class="lane-label" fill="#6d28d9">DATA & INSIGHT</text>
+
+        <!-- ── LANE 1: LEAD & PATIENT ── -->
+
+        <!-- 1. Originator creates Opportunity -->
+        <rect x="30" y="70" width="300" height="64" rx="8" fill="#1a4fa0"/>
+        <text x="180" y="97" text-anchor="middle" class="node-text">1. Originator Creates Opportunity</text>
+        <text x="180" y="113" text-anchor="middle" class="node-sub">Doctor, healthcare worker, or direct inquiry</text>
+        <text x="180" y="126" text-anchor="middle" class="node-sub">→ Opportunity ID generated</text>
+
+        <!-- 2. Patient/Client captured -->
+        <rect x="30" y="175" width="300" height="64" rx="8" fill="#1a4fa0"/>
+        <text x="180" y="200" text-anchor="middle" class="node-text">2. Patient & Client Details Captured</text>
+        <text x="180" y="216" text-anchor="middle" class="node-sub">Name, age, gender, occupation</text>
+        <text x="180" y="229" text-anchor="middle" class="node-sub">Client may differ from patient</text>
+
+        <!-- 3. Prescription/need input -->
+        <rect x="30" y="285" width="300" height="64" rx="8" fill="#1e2d3d"/>
+        <text x="180" y="308" text-anchor="middle" class="node-text">3. Need Input</text>
+        <text x="180" y="324" text-anchor="middle" class="node-sub">Prescription photo / manual entry</text>
+        <text x="180" y="337" text-anchor="middle" class="node-sub">OCR extracts structured medicine list</text>
+
+        <!-- 4. Consent -->
+        <rect x="30" y="395" width="300" height="50" rx="8" fill="#0e7490"/>
+        <text x="180" y="415" text-anchor="middle" class="node-text">4. Consent Recorded</text>
+        <text x="180" y="430" text-anchor="middle" class="node-sub">Data usage scope agreed &amp; stored</text>
+
+        <!-- Arrows lane 1 -->
+        <line x1="180" y1="134" x2="180" y2="172" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="180" y1="239" x2="180" y2="282" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="180" y1="349" x2="180" y2="392" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ── LANE 2: PRODUCT MATCH ── -->
+
+        <!-- 5. Disease/condition lookup -->
+        <rect x="370" y="175" width="190" height="64" rx="8" fill="#15803d"/>
+        <text x="465" y="198" text-anchor="middle" class="node-text">5. Condition Lookup</text>
+        <text x="465" y="214" text-anchor="middle" class="node-sub">Diagnosis codes matched</text>
+        <text x="465" y="227" text-anchor="middle" class="node-sub">to disease dataset</text>
+
+        <!-- 6. Product/service recommendation -->
+        <rect x="370" y="285" width="190" height="64" rx="8" fill="#15803d"/>
+        <text x="465" y="306" text-anchor="middle" class="node-text">6. Recommendation</text>
+        <text x="465" y="322" text-anchor="middle" class="node-sub">Medicines (Vitality)</text>
+        <text x="465" y="335" text-anchor="middle" class="node-sub">Equipment / Therapy unit</text>
+
+        <!-- Diamond: Generic available? -->
+        <polygon points="465,415 530,455 465,495 400,455" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+        <text x="465" y="450" text-anchor="middle" class="node-diamond" font-size="10">Generic</text>
+        <text x="465" y="463" text-anchor="middle" class="node-diamond" font-size="10">available?</text>
+
+        <!-- Yes/No labels -->
+        <text x="540" y="450" class="arrow-label">Yes</text>
+        <text x="395" y="510" class="arrow-label">No</text>
+
+        <!-- Generic suggestion box -->
+        <rect x="555" y="430" width="170" height="44" rx="8" fill="#d1fae5"/>
+        <text x="640" y="450" text-anchor="middle" fill="#065f46" font-size="11" font-weight="600" font-family="DM Sans">Suggest Generic</text>
+        <text x="640" y="464" text-anchor="middle" fill="#065f46" font-size="10" font-family="DM Sans">Patient approves / declines</text>
+
+        <!-- Contradiction check -->
+        <rect x="370" y="535" width="190" height="50" rx="8" fill="#be123c"/>
+        <text x="465" y="557" text-anchor="middle" class="node-text">7. Contradiction Check</text>
+        <text x="465" y="570" text-anchor="middle" class="node-sub">Active meds vs new prescription</text>
+
+        <!-- Arrows lane 2 -->
+        <!-- Lane 1 → Lane 2 horizontal -->
+        <line x1="330" y1="207" x2="367" y2="207" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="465" y1="239" x2="465" y2="282" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="465" y1="349" x2="465" y2="412" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="530" y1="455" x2="552" y2="455" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="465" y1="495" x2="465" y2="532" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ── LANE 3: ORDER & PROCURE ── -->
+
+        <!-- 8. Draft Order -->
+        <rect x="610" y="175" width="190" height="50" rx="8" fill="#b45309"/>
+        <text x="705" y="197" text-anchor="middle" class="node-text">8. Draft Order Created</text>
+        <text x="705" y="210" text-anchor="middle" class="node-sub">Items, qty, pricing logic applied</text>
+
+        <!-- 9. Supplier Selection -->
+        <rect x="610" y="265" width="190" height="50" rx="8" fill="#b45309"/>
+        <text x="705" y="286" text-anchor="middle" class="node-text">9. Supplier Selected</text>
+        <text x="705" y="299" text-anchor="middle" class="node-sub">Best price source identified</text>
+
+        <!-- 10. Purchase Order -->
+        <rect x="610" y="355" width="190" height="50" rx="8" fill="#92400e"/>
+        <text x="705" y="376" text-anchor="middle" class="node-text">10. Purchase Order Sent</text>
+        <text x="705" y="389" text-anchor="middle" class="node-sub">To stockist / distributor</text>
+
+        <!-- 11. Invoice to patient -->
+        <rect x="610" y="445" width="190" height="50" rx="8" fill="#1a4fa0"/>
+        <text x="705" y="466" text-anchor="middle" class="node-text">11. Patient Invoice</text>
+        <text x="705" y="479" text-anchor="middle" class="node-sub">Dynamic discount applied</text>
+
+        <!-- 12. Payment -->
+        <rect x="610" y="535" width="190" height="50" rx="8" fill="#0e7490"/>
+        <text x="705" y="557" text-anchor="middle" class="node-text">12. Payment Collected</text>
+        <text x="705" y="570" text-anchor="middle" class="node-sub">UPI / Razorpay link</text>
+
+        <!-- Status track boxes -->
+        <rect x="610" y="625" width="190" height="110" rx="8" fill="#f8f9fc" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="705" y="643" text-anchor="middle" fill="#374151" font-size="11" font-weight="700" font-family="DM Sans">13. Fulfilment Tracking</text>
+        <rect x="622" y="650" width="85" height="22" rx="4" fill="#dbeafe"/>
+        <text x="664" y="665" text-anchor="middle" fill="#1a4fa0" font-size="10" font-weight="600" font-family="DM Sans">Procured</text>
+        <rect x="713" y="650" width="75" height="22" rx="4" fill="#d1fae5"/>
+        <text x="750" y="665" text-anchor="middle" fill="#065f46" font-size="10" font-weight="600" font-family="DM Sans">Packaged</text>
+        <rect x="622" y="678" width="85" height="22" rx="4" fill="#fef3c7"/>
+        <text x="664" y="693" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="DM Sans">Dispatched</text>
+        <rect x="713" y="678" width="75" height="22" rx="4" fill="#dcfce7"/>
+        <text x="750" y="693" text-anchor="middle" fill="#15803d" font-size="10" font-weight="600" font-family="DM Sans">Delivered</text>
+        <rect x="660" y="706" width="88" height="22" rx="4" fill="#1a4fa0"/>
+        <text x="704" y="721" text-anchor="middle" fill="#fff" font-size="10" font-weight="600" font-family="DM Sans">Fulfilled ✓</text>
+
+        <!-- Arrows lane 3 -->
+        <line x1="560" y1="300" x2="607" y2="200" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="705" y1="225" x2="705" y2="262" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="705" y1="315" x2="705" y2="352" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="705" y1="405" x2="705" y2="442" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="705" y1="495" x2="705" y2="532" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="705" y1="585" x2="705" y2="622" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- ── LANE 4: DATA ── -->
+
+        <!-- Health Snapshot -->
+        <rect x="848" y="285" width="220" height="64" rx="8" fill="#6d28d9"/>
+        <text x="958" y="308" text-anchor="middle" class="node-text">Health Snapshot Created</text>
+        <text x="958" y="324" text-anchor="middle" class="node-sub">Patient profile + active meds</text>
+        <text x="958" y="337" text-anchor="middle" class="node-sub">+ diagnosis codes stored</text>
+
+        <!-- Refill schedule -->
+        <rect x="848" y="395" width="220" height="50" rx="8" fill="#6d28d9"/>
+        <text x="958" y="417" text-anchor="middle" class="node-text">Refill Schedule Set</text>
+        <text x="958" y="430" text-anchor="middle" class="node-sub">Auto-reminder triggered before due</text>
+
+        <!-- Financial log -->
+        <rect x="848" y="490" width="220" height="50" rx="8" fill="#1e2d3d"/>
+        <text x="958" y="512" text-anchor="middle" class="node-text">Financial Record Logged</text>
+        <text x="958" y="525" text-anchor="middle" class="node-sub">Cost, margin, payment ref stored</text>
+
+        <!-- Analytics -->
+        <rect x="848" y="585" width="220" height="64" rx="8" fill="#0e7490"/>
+        <text x="958" y="608" text-anchor="middle" class="node-text">Opportunity Closed</text>
+        <text x="958" y="624" text-anchor="middle" class="node-sub">Originator commission logged</text>
+        <text x="958" y="637" text-anchor="middle" class="node-sub">Analytics updated</text>
+
+        <!-- Arrows lane 4 -->
+        <line x1="800" y1="337" x2="845" y2="317" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="958" y1="349" x2="958" y2="392" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="958" y1="445" x2="958" y2="487" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="958" y1="540" x2="958" y2="582" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- Cross lane arrows: consent to health snapshot -->
+        <line x1="330" y1="420" x2="845" y2="305" stroke="#6d28d9" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+        <!-- fulfilled to analytics -->
+        <line x1="800" y1="728" x2="848" y2="617" stroke="#0e7490" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+      </svg>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#1a4fa0"></div> Lead & Patient actions</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#15803d"></div> Product matching</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b45309"></div> Order & procurement</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6d28d9"></div> Data capture</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e2e8f0; border:1px solid #94a3b8"></div> Decision point</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ OPS FLOW -->
+<div class="section" id="tab-ops">
+  <div class="page-wrap">
+    <div class="page-title">Internal Operations Flow</div>
+    <div class="page-subtitle">How the team processes an order internally — from purchase order to last-mile delivery</div>
+
+    <div class="flow-container">
+      <div class="flow-title">Procurement → Fulfilment Pipeline</div>
+      <svg class="flow-svg" viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+          </marker>
+        </defs>
+
+        <!-- TIMELINE SPINE -->
+        <line x1="60" y1="300" x2="1060" y2="300" stroke="#e2e8f0" stroke-width="2"/>
+
+        <!-- STEP CONNECTORS -->
+        <line x1="120" y1="300" x2="220" y2="300" stroke="#2563b0" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="320" y1="300" x2="420" y2="300" stroke="#2563b0" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="520" y1="300" x2="620" y2="300" stroke="#2563b0" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="720" y1="300" x2="820" y2="300" stroke="#2563b0" stroke-width="2" marker-end="url(#arr2)"/>
+        <line x1="920" y1="300" x2="1020" y2="300" stroke="#2563b0" stroke-width="2" marker-end="url(#arr2)"/>
+
+        <!-- STEP 1: Demand Consolidation -->
+        <circle cx="120" cy="300" r="34" fill="#1a4fa0"/>
+        <text x="120" y="294" text-anchor="middle" fill="white" font-size="22" font-family="DM Sans" font-weight="700">1</text>
+        <text x="120" y="310" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans">DEMAND</text>
+        <rect x="50" y="345" width="140" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="120" y="363" text-anchor="middle" fill="#1a4fa0" font-size="11" font-weight="700" font-family="DM Sans">Demand Consolidation</text>
+        <text x="120" y="379" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">Active prescriptions</text>
+        <text x="120" y="393" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">aggregated every</text>
+        <text x="120" y="407" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">48 hours by Enzo</text>
+        <text x="120" y="425" text-anchor="middle" fill="#b45309" font-size="9" font-weight="600" font-family="DM Sans">Owner: Enzo (automated)</text>
+
+        <!-- STEP 2: Supplier Selection -->
+        <circle cx="320" cy="300" r="34" fill="#0e7490"/>
+        <text x="320" y="294" text-anchor="middle" fill="white" font-size="22" font-family="DM Sans" font-weight="700">2</text>
+        <text x="320" y="310" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans">SUPPLIER</text>
+        <rect x="250" y="345" width="140" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="320" y="363" text-anchor="middle" fill="#0e7490" font-size="11" font-weight="700" font-family="DM Sans">Supplier Selection</text>
+        <text x="320" y="379" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">Best price source</text>
+        <text x="320" y="393" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">per drug from</text>
+        <text x="320" y="407" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">registered stockists</text>
+        <text x="320" y="425" text-anchor="middle" fill="#b45309" font-size="9" font-weight="600" font-family="DM Sans">Owner: Ops team</text>
+
+        <!-- STEP 3: Purchase Order -->
+        <circle cx="520" cy="300" r="34" fill="#b45309"/>
+        <text x="520" y="294" text-anchor="middle" fill="white" font-size="22" font-family="DM Sans" font-weight="700">3</text>
+        <text x="520" y="310" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans">PURCHASE</text>
+        <rect x="450" y="345" width="140" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="520" y="363" text-anchor="middle" fill="#b45309" font-size="11" font-weight="700" font-family="DM Sans">Purchase Order</text>
+        <text x="520" y="379" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">PO generated &amp; sent</text>
+        <text x="520" y="393" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">to stockist via</text>
+        <text x="520" y="407" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">email / WhatsApp</text>
+        <text x="520" y="425" text-anchor="middle" fill="#b45309" font-size="9" font-weight="600" font-family="DM Sans">Owner: Ops team</text>
+
+        <!-- STEP 4: Receive & Check -->
+        <circle cx="720" cy="300" r="34" fill="#15803d"/>
+        <text x="720" y="294" text-anchor="middle" fill="white" font-size="22" font-family="DM Sans" font-weight="700">4</text>
+        <text x="720" y="310" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans">RECEIVE</text>
+        <rect x="650" y="345" width="140" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="720" y="363" text-anchor="middle" fill="#15803d" font-size="11" font-weight="700" font-family="DM Sans">Receive &amp; Verify</text>
+        <text x="720" y="379" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">Stock received,</text>
+        <text x="720" y="393" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">batch &amp; expiry</text>
+        <text x="720" y="407" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">verified</text>
+        <text x="720" y="425" text-anchor="middle" fill="#b45309" font-size="9" font-weight="600" font-family="DM Sans">Owner: Ops team</text>
+
+        <!-- STEP 5: Pack & Dispatch -->
+        <circle cx="920" cy="300" r="34" fill="#6d28d9"/>
+        <text x="920" y="294" text-anchor="middle" fill="white" font-size="22" font-family="DM Sans" font-weight="700">5</text>
+        <text x="920" y="310" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans">DISPATCH</text>
+        <rect x="850" y="345" width="140" height="90" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="920" y="363" text-anchor="middle" fill="#6d28d9" font-size="11" font-weight="700" font-family="DM Sans">Pack &amp; Dispatch</text>
+        <text x="920" y="379" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">Patient-wise packing,</text>
+        <text x="920" y="393" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">label printed,</text>
+        <text x="920" y="407" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">delivery partner assigned</text>
+        <text x="920" y="425" text-anchor="middle" fill="#b45309" font-size="9" font-weight="600" font-family="DM Sans">Owner: Ops team</text>
+
+        <!-- DELIVERED endpoint -->
+        <circle cx="1060" cy="300" r="28" fill="#1e2d3d"/>
+        <text x="1060" y="296" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">DELI-</text>
+        <text x="1060" y="308" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">VERED</text>
+
+        <!-- ABOVE TIMELINE: Status flags -->
+        <rect x="50" y="195" width="140" height="28" rx="14" fill="#dbeafe"/>
+        <text x="120" y="213" text-anchor="middle" fill="#1a4fa0" font-size="10" font-weight="600" font-family="DM Sans">Status: ORDERED</text>
+
+        <rect x="250" y="195" width="140" height="28" rx="14" fill="#cffafe"/>
+        <text x="320" y="213" text-anchor="middle" fill="#0e7490" font-size="10" font-weight="600" font-family="DM Sans">Status: PROCURING</text>
+
+        <rect x="450" y="195" width="140" height="28" rx="14" fill="#fef3c7"/>
+        <text x="520" y="213" text-anchor="middle" fill="#92400e" font-size="10" font-weight="600" font-family="DM Sans">Status: PO SENT</text>
+
+        <rect x="650" y="195" width="140" height="28" rx="14" fill="#dcfce7"/>
+        <text x="720" y="213" text-anchor="middle" fill="#15803d" font-size="10" font-weight="600" font-family="DM Sans">Status: RECEIVED</text>
+
+        <rect x="850" y="195" width="140" height="28" rx="14" fill="#ede9fe"/>
+        <text x="920" y="213" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="600" font-family="DM Sans">Status: DISPATCHED</text>
+
+        <!-- vertical connectors to status pills -->
+        <line x1="120" y1="266" x2="120" y2="226" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="320" y1="266" x2="320" y2="226" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="520" y1="266" x2="520" y2="226" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="720" y1="266" x2="720" y2="226" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="920" y1="266" x2="920" y2="226" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <!-- Enzo automation note -->
+        <rect x="30" y="500" width="320" height="50" rx="8" fill="#f0f4ff" stroke="#dbeafe" stroke-width="1"/>
+        <text x="190" y="522" text-anchor="middle" fill="#1a4fa0" font-size="11" font-weight="700" font-family="DM Sans">Enzo automates Steps 1 + 3 (Phase 2)</text>
+        <text x="190" y="537" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">Steps 2, 4, 5 remain human-verified until Phase 3</text>
+
+        <!-- Financial note -->
+        <rect x="700" y="500" width="360" height="50" rx="8" fill="#f0fdf4" stroke="#dcfce7" stroke-width="1"/>
+        <text x="880" y="522" text-anchor="middle" fill="#15803d" font-size="11" font-weight="700" font-family="DM Sans">Every step updates order status in real time</text>
+        <text x="880" y="537" text-anchor="middle" fill="#6b7280" font-size="10" font-family="DM Sans">Financial report auto-generated on fulfilment</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ ER DIAGRAM -->
+<div class="section" id="tab-er">
+  <div class="page-wrap">
+    <div class="page-title">Data Model — Entity Relationship Diagram</div>
+    <div class="page-subtitle">Core tables, their fields, and how they relate. Primary keys in amber, foreign keys in blue.</div>
+
+    <div class="er-container">
+      <svg viewBox="0 0 1200 860" style="width:100%; min-width:900px;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="er-arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+          </marker>
+        </defs>
+
+        <!-- helper: table at (x,y) with title and fields array -->
+        <!-- OPPORTUNITY table -->
+        <g id="tbl-opp">
+          <rect x="20" y="20" width="210" height="210" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="20" y="20" width="210" height="34" rx="8" fill="#1a4fa0"/>
+          <rect x="20" y="42" width="210" height="12" rx="0" fill="#1a4fa0"/>
+          <text x="125" y="42" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">OPPORTUNITY</text>
+          <!-- fields -->
+          <text x="32" y="72" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  opportunity_id</text>
+          <text x="32" y="90" fill="#374151" font-size="10" font-family="DM Mono">    status</text>
+          <text x="32" y="106" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  originator_id</text>
+          <text x="32" y="122" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  client_id</text>
+          <text x="32" y="138" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  patient_id</text>
+          <text x="32" y="154" fill="#374151" font-size="10" font-family="DM Mono">    unit (vitality/equip/therapy)</text>
+          <text x="32" y="170" fill="#374151" font-size="10" font-family="DM Mono">    source (referral/direct/web)</text>
+          <text x="32" y="186" fill="#374151" font-size="10" font-family="DM Mono">    created_at</text>
+          <text x="32" y="202" fill="#374151" font-size="10" font-family="DM Mono">    closed_at</text>
+          <line x1="20" y1="64" x2="230" y2="64" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- ORIGINATOR table -->
+        <g id="tbl-orig">
+          <rect x="20" y="265" width="210" height="160" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="20" y="265" width="210" height="34" rx="8" fill="#0e7490"/>
+          <rect x="20" y="287" width="210" height="12" fill="#0e7490"/>
+          <text x="125" y="287" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">ORIGINATOR</text>
+          <text x="32" y="318" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  originator_id</text>
+          <text x="32" y="334" fill="#374151" font-size="10" font-family="DM Mono">    name</text>
+          <text x="32" y="350" fill="#374151" font-size="10" font-family="DM Mono">    type (doctor/staff/partner)</text>
+          <text x="32" y="366" fill="#374151" font-size="10" font-family="DM Mono">    phone</text>
+          <text x="32" y="382" fill="#374151" font-size="10" font-family="DM Mono">    commission_rate</text>
+          <text x="32" y="398" fill="#374151" font-size="10" font-family="DM Mono">    active</text>
+          <line x1="20" y1="309" x2="230" y2="309" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- PATIENT table -->
+        <g id="tbl-pat">
+          <rect x="280" y="20" width="210" height="220" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="280" y="20" width="210" height="34" rx="8" fill="#6d28d9"/>
+          <rect x="280" y="42" width="210" height="12" fill="#6d28d9"/>
+          <text x="385" y="42" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">PATIENT</text>
+          <text x="292" y="72" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  patient_id</text>
+          <text x="292" y="88" fill="#374151" font-size="10" font-family="DM Mono">    abha_id (nullable)</text>
+          <text x="292" y="104" fill="#374151" font-size="10" font-family="DM Mono">    name</text>
+          <text x="292" y="120" fill="#374151" font-size="10" font-family="DM Mono">    age</text>
+          <text x="292" y="136" fill="#374151" font-size="10" font-family="DM Mono">    gender</text>
+          <text x="292" y="152" fill="#374151" font-size="10" font-family="DM Mono">    occupation</text>
+          <text x="292" y="168" fill="#374151" font-size="10" font-family="DM Mono">    phone</text>
+          <text x="292" y="184" fill="#374151" font-size="10" font-family="DM Mono">    consent_given_at</text>
+          <text x="292" y="200" fill="#374151" font-size="10" font-family="DM Mono">    consent_scope (json)</text>
+          <text x="292" y="216" fill="#374151" font-size="10" font-family="DM Mono">    created_at</text>
+          <line x1="280" y1="64" x2="490" y2="64" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- PRESCRIPTION table -->
+        <g id="tbl-rx">
+          <rect x="280" y="280" width="210" height="200" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="280" y="280" width="210" height="34" rx="8" fill="#1a4fa0"/>
+          <rect x="280" y="302" width="210" height="12" fill="#1a4fa0"/>
+          <text x="385" y="302" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">PRESCRIPTION</text>
+          <text x="292" y="332" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  prescription_id</text>
+          <text x="292" y="348" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  patient_id</text>
+          <text x="292" y="364" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  opportunity_id</text>
+          <text x="292" y="380" fill="#374151" font-size="10" font-family="DM Mono">    raw_image_url</text>
+          <text x="292" y="396" fill="#374151" font-size="10" font-family="DM Mono">    ocr_confidence</text>
+          <text x="292" y="412" fill="#374151" font-size="10" font-family="DM Mono">    status</text>
+          <text x="292" y="428" fill="#374151" font-size="10" font-family="DM Mono">    doctor_name</text>
+          <text x="292" y="444" fill="#374151" font-size="10" font-family="DM Mono">    created_at</text>
+          <line x1="280" y1="324" x2="490" y2="324" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- PRODUCT / SERVICE CATALOGUE -->
+        <g id="tbl-prod">
+          <rect x="540" y="20" width="220" height="210" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="540" y="20" width="220" height="34" rx="8" fill="#15803d"/>
+          <rect x="540" y="42" width="220" height="12" fill="#15803d"/>
+          <text x="650" y="42" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">PRODUCT / SERVICE</text>
+          <text x="552" y="72" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  product_id</text>
+          <text x="552" y="88" fill="#374151" font-size="10" font-family="DM Mono">    name_brand</text>
+          <text x="552" y="104" fill="#374151" font-size="10" font-family="DM Mono">    name_generic</text>
+          <text x="552" y="120" fill="#374151" font-size="10" font-family="DM Mono">    category (medicine/equip/therapy)</text>
+          <text x="552" y="136" fill="#374151" font-size="10" font-family="DM Mono">    unit (strip/piece/session)</text>
+          <text x="552" y="152" fill="#374151" font-size="10" font-family="DM Mono">    base_price</text>
+          <text x="552" y="168" fill="#374151" font-size="10" font-family="DM Mono">    is_prescription_only</text>
+          <text x="552" y="184" fill="#374151" font-size="10" font-family="DM Mono">    supplier_id (default)</text>
+          <text x="552" y="200" fill="#374151" font-size="10" font-family="DM Mono">    active</text>
+          <line x1="540" y1="64" x2="760" y2="64" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- ORDER table -->
+        <g id="tbl-order">
+          <rect x="540" y="265" width="220" height="220" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="540" y="265" width="220" height="34" rx="8" fill="#b45309"/>
+          <rect x="540" y="287" width="220" height="12" fill="#b45309"/>
+          <text x="650" y="287" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">ORDER</text>
+          <text x="552" y="317" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  order_id</text>
+          <text x="552" y="333" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  opportunity_id</text>
+          <text x="552" y="349" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  patient_id</text>
+          <text x="552" y="365" fill="#374151" font-size="10" font-family="DM Mono">    status (draft→fulfilled)</text>
+          <text x="552" y="381" fill="#374151" font-size="10" font-family="DM Mono">    total_cost_price</text>
+          <text x="552" y="397" fill="#374151" font-size="10" font-family="DM Mono">    total_sell_price</text>
+          <text x="552" y="413" fill="#374151" font-size="10" font-family="DM Mono">    margin_pct</text>
+          <text x="552" y="429" fill="#374151" font-size="10" font-family="DM Mono">    placed_at</text>
+          <text x="552" y="445" fill="#374151" font-size="10" font-family="DM Mono">    delivered_at</text>
+          <text x="552" y="461" fill="#374151" font-size="10" font-family="DM Mono">    delivery_address</text>
+          <line x1="540" y1="309" x2="760" y2="309" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- DISEASE / CONDITION -->
+        <g id="tbl-disease">
+          <rect x="800" y="20" width="210" height="175" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="800" y="20" width="210" height="34" rx="8" fill="#be123c"/>
+          <rect x="800" y="42" width="210" height="12" fill="#be123c"/>
+          <text x="905" y="42" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">DISEASE / CONDITION</text>
+          <text x="812" y="72" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  condition_id</text>
+          <text x="812" y="88" fill="#374151" font-size="10" font-family="DM Mono">    icd10_code</text>
+          <text x="812" y="104" fill="#374151" font-size="10" font-family="DM Mono">    name</text>
+          <text x="812" y="120" fill="#374151" font-size="10" font-family="DM Mono">    category (chronic/acute)</text>
+          <text x="812" y="136" fill="#374151" font-size="10" font-family="DM Mono">    standard_treatments (json)</text>
+          <text x="812" y="152" fill="#374151" font-size="10" font-family="DM Mono">    related_product_ids (json)</text>
+          <text x="812" y="168" fill="#374151" font-size="10" font-family="DM Mono">    contraindications (json)</text>
+          <line x1="800" y1="64" x2="1010" y2="64" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- INVOICE -->
+        <g id="tbl-inv">
+          <rect x="800" y="230" width="210" height="175" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="800" y="230" width="210" height="34" rx="8" fill="#1e2d3d"/>
+          <rect x="800" y="252" width="210" height="12" fill="#1e2d3d"/>
+          <text x="905" y="252" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">INVOICE</text>
+          <text x="812" y="282" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  invoice_id</text>
+          <text x="812" y="298" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  order_id</text>
+          <text x="812" y="314" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  patient_id</text>
+          <text x="812" y="330" fill="#374151" font-size="10" font-family="DM Mono">    line_items (json)</text>
+          <text x="812" y="346" fill="#374151" font-size="10" font-family="DM Mono">    subtotal</text>
+          <text x="812" y="362" fill="#374151" font-size="10" font-family="DM Mono">    discount_applied</text>
+          <text x="812" y="378" fill="#374151" font-size="10" font-family="DM Mono">    total_amount</text>
+          <text x="812" y="394" fill="#374151" font-size="10" font-family="DM Mono">    paid_at / payment_ref</text>
+          <line x1="800" y1="274" x2="1010" y2="274" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- HEALTH SNAPSHOT -->
+        <g id="tbl-snap">
+          <rect x="280" y="520" width="210" height="175" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="280" y="520" width="210" height="34" rx="8" fill="#6d28d9"/>
+          <rect x="280" y="542" width="210" height="12" fill="#6d28d9"/>
+          <text x="385" y="542" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">HEALTH SNAPSHOT</text>
+          <text x="292" y="572" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  snapshot_id</text>
+          <text x="292" y="588" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  patient_id</text>
+          <text x="292" y="604" fill="#374151" font-size="10" font-family="DM Mono">    snapshot_date</text>
+          <text x="292" y="620" fill="#374151" font-size="10" font-family="DM Mono">    active_medicines (json)</text>
+          <text x="292" y="636" fill="#374151" font-size="10" font-family="DM Mono">    conditions (json)</text>
+          <text x="292" y="652" fill="#374151" font-size="10" font-family="DM Mono">    lab_reports (json)</text>
+          <text x="292" y="668" fill="#374151" font-size="10" font-family="DM Mono">    notes</text>
+          <line x1="280" y1="564" x2="490" y2="564" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- REFILL SCHEDULE -->
+        <g id="tbl-refill">
+          <rect x="540" y="520" width="220" height="155" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="540" y="520" width="220" height="34" rx="8" fill="#0e7490"/>
+          <rect x="540" y="542" width="220" height="12" fill="#0e7490"/>
+          <text x="650" y="542" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">REFILL SCHEDULE</text>
+          <text x="552" y="572" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  refill_id</text>
+          <text x="552" y="588" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  patient_id</text>
+          <text x="552" y="604" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  prescription_id</text>
+          <text x="552" y="620" fill="#374151" font-size="10" font-family="DM Mono">    drug_name</text>
+          <text x="552" y="636" fill="#374151" font-size="10" font-family="DM Mono">    next_refill_date</text>
+          <text x="552" y="652" fill="#374151" font-size="10" font-family="DM Mono">    reminder_sent_at</text>
+          <text x="552" y="668" fill="#374151" font-size="10" font-family="DM Mono">    reorder_triggered_at</text>
+          <line x1="540" y1="564" x2="760" y2="564" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- PURCHASE ORDER table -->
+        <g id="tbl-po">
+          <rect x="800" y="440" width="210" height="155" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+          <rect x="800" y="440" width="210" height="34" rx="8" fill="#92400e"/>
+          <rect x="800" y="462" width="210" height="12" fill="#92400e"/>
+          <text x="905" y="462" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="DM Sans">PURCHASE ORDER</text>
+          <text x="812" y="492" fill="#b45309" font-size="10" font-weight="600" font-family="DM Mono">PK  po_id</text>
+          <text x="812" y="508" fill="#2563b0" font-size="10" font-weight="600" font-family="DM Mono">FK  supplier_id</text>
+          <text x="812" y="524" fill="#374151" font-size="10" font-family="DM Mono">    status (draft/sent/received)</text>
+          <text x="812" y="540" fill="#374151" font-size="10" font-family="DM Mono">    line_items (json)</text>
+          <text x="812" y="556" fill="#374151" font-size="10" font-family="DM Mono">    total_value</text>
+          <text x="812" y="572" fill="#374151" font-size="10" font-family="DM Mono">    generated_at</text>
+          <text x="812" y="588" fill="#374151" font-size="10" font-family="DM Mono">    received_at</text>
+          <line x1="800" y1="484" x2="1010" y2="484" stroke="#e2e8f0" stroke-width="1"/>
+        </g>
+
+        <!-- ── RELATIONSHIPS ── -->
+        <!-- Originator → Opportunity -->
+        <line x1="125" y1="265" x2="90" y2="230" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)" stroke-dasharray="5,3"/>
+        <!-- Patient → Opportunity -->
+        <line x1="385" y1="240" x2="230" y2="130" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)" stroke-dasharray="5,3"/>
+        <!-- Patient → Prescription -->
+        <line x1="385" y1="240" x2="385" y2="277" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)"/>
+        <!-- Prescription → Opportunity -->
+        <line x1="330" y1="355" x2="230" y2="120" stroke="#94a3b8" stroke-width="1" marker-end="url(#er-arr)" stroke-dasharray="4,3"/>
+        <!-- Opportunity → Order -->
+        <line x1="490" y1="100" x2="540" y2="340" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)"/>
+        <!-- Product → Order (via order items) -->
+        <line x1="650" y1="230" x2="650" y2="262" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)"/>
+        <!-- Order → Invoice -->
+        <line x1="760" y1="370" x2="800" y2="310" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)"/>
+        <!-- Order → Purchase Order -->
+        <line x1="760" y1="430" x2="800" y2="480" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#er-arr)"/>
+        <!-- Patient → Health Snapshot -->
+        <line x1="385" y1="240" x2="385" y2="517" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#er-arr)" stroke-dasharray="5,3"/>
+        <!-- Prescription → Refill Schedule -->
+        <line x1="490" y1="400" x2="540" y2="590" stroke="#0e7490" stroke-width="1.5" marker-end="url(#er-arr)" stroke-dasharray="5,3"/>
+        <!-- Disease → Product -->
+        <line x1="905" y1="195" x2="760" y2="130" stroke="#94a3b8" stroke-width="1" marker-end="url(#er-arr)" stroke-dasharray="4,3"/>
+
+        <!-- LEGEND -->
+        <rect x="20" y="760" width="580" height="60" rx="8" fill="#f8f9fc" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="32" y="778" fill="#374151" font-size="11" font-weight="700" font-family="DM Sans">Legend</text>
+        <rect x="32" y="788" width="10" height="10" rx="2" fill="#b45309"/>
+        <text x="48" y="798" fill="#374151" font-size="10" font-family="DM Sans">PK = Primary Key (unique row ID)</text>
+        <rect x="200" y="788" width="10" height="10" rx="2" fill="#2563b0"/>
+        <text x="216" y="798" fill="#374151" font-size="10" font-family="DM Sans">FK = Foreign Key (link to another table)</text>
+        <line x1="400" y1="793" x2="430" y2="793" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="436" y="798" fill="#374151" font-size="10" font-family="DM Sans">Solid = strong link</text>
+        <line x1="32" y1="810" x2="62" y2="810" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="68" y="814" fill="#374151" font-size="10" font-family="DM Sans">Dashed = optional / async link (e.g. data flows)</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ PLAIN ENGLISH -->
+<div class="section" id="tab-plain">
+  <div class="page-wrap">
+    <div class="page-title">Plain English Guide</div>
+    <div class="page-subtitle">For the medical and operations team — how the system works without the tech jargon</div>
+
+    <div class="plain-section">
+      <div class="plain-heading">What are we building and why?</div>
+      <div class="plain-lead">
+        AxonIQ is building a system that manages the full journey of a patient — from the moment someone refers them to us, all the way to their medicines being delivered, their therapy sessions being booked, or their equipment being rented. Along the way, the system quietly builds a health record for each patient. Over time, that record becomes valuable enough that pharma companies and hospitals will pay us for the insights it provides.
+      </div>
+      <div class="callout">
+        <strong>The business logic in one sentence:</strong> We make money today by selling medicines and services. We build long-term value by capturing clean health data every time we do it.
+      </div>
+    </div>
+
+    <div class="plain-section">
+      <div class="plain-heading">The Four Units — What Each Does</div>
+      <div class="two-col">
+        <div class="info-card">
+          <h4>Vitality Health <span class="tag tag-blue">Phase 1</span></h4>
+          <ul>
+            <li>Sells medicines and surgical supplies directly to patients</li>
+            <li>Finds the best price from suppliers, passes savings to the patient</li>
+            <li>Manages delivery from supplier to patient's doorstep</li>
+            <li>Reminds patients to refill before they run out</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>Equipment Unit <span class="tag tag-amber">Phase 2</span></h4>
+          <ul>
+            <li>Rents or sells oxygen concentrators, beds, mobility aids</li>
+            <li>Serves both individual patients and small clinics</li>
+            <li>Tracks equipment location, condition, and return dates</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>Therapies Unit <span class="tag tag-amber">Phase 2</span></h4>
+          <ul>
+            <li>Books and manages physiotherapy, OT, speech therapy sessions</li>
+            <li>Links therapy outcomes back to the patient's health record</li>
+            <li>Generates recurring appointment revenue</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>Enzo (the tech platform) <span class="tag tag-blue">All phases</span></h4>
+          <ul>
+            <li>The software that connects all three units</li>
+            <li>Reads prescriptions, generates orders, tracks delivery</li>
+            <li>Stores patient health data securely with their consent</li>
+            <li>Will eventually suggest the right products for each patient automatically</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="plain-section">
+      <div class="plain-heading">How a Typical Patient Journey Works — Step by Step</div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">A lead comes in</div>
+            <div class="step-desc">A doctor, a healthcare worker, or even the patient themselves contacts us. We create an "Opportunity" — a unique ID for this potential sale. We record who brought the lead (the Originator) because we may pay them a referral fee later.</div>
+            <span class="step-who">Who does this: Medical co-founders' network, direct WhatsApp</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">We capture the patient and client details</div>
+            <div class="step-desc">Name, age, gender, occupation, phone. Note: the person paying (client) may be different from the patient — e.g. a family member buying for an elderly parent. We record both. We also get their consent to store and use their health data.</div>
+            <span class="step-who">Who does this: Operations team via the Enzo form</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">The prescription or need is entered</div>
+            <div class="step-desc">Patient sends us a photo of their prescription on WhatsApp or through the app. Enzo reads the prescription automatically and creates a medicine list. If it's not sure about something, it flags it for a human to check.</div>
+            <span class="step-who">Who does this: Enzo (automated) + ops team for unclear cases</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">We check for better options</div>
+            <div class="step-desc">If the prescription has a branded medicine, Enzo checks whether a cheaper generic with the same ingredients exists. If it does, we offer it to the patient. We also check that the new medicines won't clash with anything the patient is already taking.</div>
+            <span class="step-who">Who does this: Enzo (automated check) + patient approves</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">We create the order and find the best supplier</div>
+            <div class="step-desc">We generate a draft order with prices. We check our registered stockists to find who has the best price. All pending patient orders are batched every 48 hours into one purchase order to the supplier — this keeps our buying volume high so we get better rates.</div>
+            <span class="step-who">Who does this: Enzo creates draft, ops team confirms supplier</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <div class="step-title">Patient receives their invoice and pays</div>
+            <div class="step-desc">Enzo generates a bill for the patient with the discounted price shown clearly. A payment link is sent on WhatsApp. Patient pays via UPI. Simple.</div>
+            <span class="step-who">Who does this: Enzo (automated) via WhatsApp</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <div class="step-title">Order is procured, packed, and delivered</div>
+            <div class="step-desc">Supplier delivers stock to us. We verify it, pack it patient-by-patient, and hand it to the delivery partner. The patient gets a tracking update at each stage: Ordered → Received → Packed → Out for delivery → Delivered.</div>
+            <span class="step-who">Who does this: Operations team</span>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">8</div>
+          <div class="step-content">
+            <div class="step-title">Health data is stored. Refill is scheduled.</div>
+            <div class="step-desc">Once delivered, Enzo saves the prescription to the patient's health record. It also calculates when the medicines will run out and automatically sends a refill reminder before that date. The patient barely needs to think about it.</div>
+            <span class="step-who">Who does this: Enzo (fully automated)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="plain-section">
+      <div class="plain-heading">What the Medical Team's Role Is</div>
+      <div class="callout">
+        The medical co-founders are the most critical asset in Phase 1 — not for clinical work inside the system, but for <strong>trust and distribution</strong>. Your existing patient and doctor relationships are the zero-cost customer acquisition channel that no amount of money can replace. Every doctor you know is a potential Originator. Every chronic patient in your network is a potential first customer.
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <h4>What Medical Co-founders Own</h4>
+          <ul>
+            <li>Recruiting first 20–50 patients from existing relationships</li>
+            <li>Verifying prescriptions that the OCR flags as unclear</li>
+            <li>Reviewing drug contradiction alerts before they go to the doctor</li>
+            <li>Building and maintaining the disease-to-product mapping dataset</li>
+            <li>Training the ops team on handling prescription queries safely</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h4>What Medical Team Does NOT Need to Do</h4>
+          <ul>
+            <li>Write code or manage the database</li>
+            <li>Handle procurement or supplier negotiations</li>
+            <li>Manage delivery logistics</li>
+            <li>Build the app — that is the developer team's job</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
