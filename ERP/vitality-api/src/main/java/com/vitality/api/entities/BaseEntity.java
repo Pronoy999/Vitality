@@ -11,5 +11,5 @@ public class BaseEntity {
             sequenceName = "global_sid_seq",
             allocationSize = 1
     )
-    private Long sid;
+    private Long id;
 }

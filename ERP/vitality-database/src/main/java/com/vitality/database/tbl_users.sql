@@ -6,7 +6,7 @@ create table vitality.tbl_users
     first_name        varchar(1000) not null,
     last_name         varchar(1000) not null,
     date_of_birth     date                   default null,
-    gender            varchar(10)   not null,
+    gender            varchar(10)   default null,
     age               decimal(10, 0)         default null,
     role_id           int                    default null,
     is_active         boolean                default true,
@@ -17,4 +17,4 @@ create index first_name_idx on tbl_users (first_name);
 alter table tbl_users
     add constraint fk_role_id
         foreign key (role_id)
-            references vitality.tbl_roles_master (id);
+            references vitality.tbl_roles_master (id) on DELETE set null on UPDATE cascade;

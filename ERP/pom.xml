@@ -27,6 +27,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <twilo.version>11.3.1</twilo.version>
         <slf4j.version>2.0.17</slf4j.version>
+        <google-api.version>2.8.0</google-api.version>
+        <jackson.version>2.19.0</jackson.version>
+        <google.oauth.jetty.version>1.39.0</google.oauth.jetty.version>
+        <google-http-client-jackson2.version>1.47.0</google-http-client-jackson2.version>
+        <java-jwt.version>4.5.0</java-jwt.version>
     </properties>
     <dependencies>
         <dependency>

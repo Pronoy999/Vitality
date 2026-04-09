@@ -1,5 +1,7 @@
 package com.vitality.api.config;
 
+import com.vitality.common.utils.SecurityUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,5 +16,10 @@ public class VitalityConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
+    }
+
+    @Bean
+    public SecurityUtils securityUtils() {
+        return new SecurityUtils();
     }
 }

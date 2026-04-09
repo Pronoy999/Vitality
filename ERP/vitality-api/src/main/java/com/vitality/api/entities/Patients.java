@@ -1,9 +1,6 @@
 package com.vitality.api.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,7 +12,12 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_patients")
 public class Patients {
     @Id
-    @Column(name = "guid", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "credentials_seq")
+    @SequenceGenerator(
+            name = "credentials_seq",
+            sequenceName = "global_sid_seq",
+            allocationSize = 1
+    )
     private String guid;
 
     @Column(name = "abha_id")
@@ -51,6 +53,9 @@ public class Patients {
     @Column(name = "ailment_history")
     private String ailmentHistory;
 
+    @Column(name = "health_parameters")
+    private String healthParameters;
+
     @Column(name = "has_heath_insurance")
     private boolean hasHealthInsurance;
 
@@ -64,7 +69,11 @@ public class Patients {
     private String additionalServicesRequired;
 
     @CreationTimestamp
-    private LocalDateTime created;
+    private LocalDateTime created_timestamp;
     @UpdateTimestamp
-    private LocalDateTime updated;
+    private LocalDateTime updated_timestamp;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "guid", insertable = false, updatable = false)
+    private User user;
 }

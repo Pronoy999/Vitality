@@ -4,4 +4,5 @@ public class Constants {
     public static final String VITALITY_API_BASE_PATH = "/api/v1/vitality";
     public static final String PATIENT_PATH = VITALITY_API_BASE_PATH + "/patient";
     public static final String OTP_MESSAGE = "Your Vitality OTP code is: ";
+    public static final String USER_PATH = VITALITY_API_BASE_PATH + "/user";
 }
