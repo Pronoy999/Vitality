@@ -38,4 +38,8 @@ public class User {
     @JoinColumn(name = "role_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Roles userRole;
 
+    @PreUpdate
+    public void preUpdate() {
+        this.updated_timestamp = LocalDateTime.now();
+    }
 }

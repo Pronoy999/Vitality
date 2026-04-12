@@ -1,8 +1,10 @@
 package com.vitality.api.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @MappedSuperclass
+@Data
 public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_sid_gen")

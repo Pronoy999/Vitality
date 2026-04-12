@@ -37,6 +37,9 @@ public final class SecurityUtils {
             GoogleIdToken googleIdToken = verifier.verify(token);
             if (Objects.nonNull(googleIdToken)) {
                 GoogleIdToken.Payload payload = googleIdToken.getPayload();
+                if (!payload.getAudience().equals(googleClientId)) {
+                    throw new InvalidTokenException("Invalid Audience in Google OAuth Token");
+                }
                 String firstName = payload.get("given_name").toString();
                 String lastName = payload.get("family_name").toString();
                 String email = payload.getEmail();
@@ -47,16 +50,17 @@ public final class SecurityUtils {
             throw new InvalidTokenException("Invalid Token / Token could not be verified", e);
         }
     }
+
     /**
      * Method to create a JWT token with email, guid, and third-party token.
      *
-     * @param email:           the email of the user.
-     * @param guid:            the unique identifier for the user.
+     * @param email: the email of the user.
+     * @param guid:  the unique identifier for the user.
      * @return the generated JWT token.
      */
     public String createJwt(@NotNull final String email, @NotNull final String guid) {
         Algorithm algorithm = Algorithm.HMAC256(key);
-        return JWT.create().withClaim("email", email).withClaim("guid", guid).sign(algorithm);
+        return JWT.create().withClaim("guid", guid).sign(algorithm);
     }
 
     /**
@@ -68,13 +72,12 @@ public final class SecurityUtils {
     public JwtData decodeJwt(@NotNull final String jwt) {
         try {
             DecodedJWT decodedJWT = JWT.decode(jwt);
-            String email = decodedJWT.getClaim("email").asString();
             String guid = decodedJWT.getClaim("guid").asString();
             String thirdPartyToken = "";
             if (!decodedJWT.getClaim("thirdPartyToken").isNull()) {
                 thirdPartyToken = decodedJWT.getClaim("thirdPartyToken").asString();
             }
-            return new JwtData(guid, email, thirdPartyToken);
+            return new JwtData(guid, null, thirdPartyToken);
         } catch (JWTVerificationException e) {
             throw new InvalidTokenException(e);
         }

@@ -20,7 +20,7 @@ public class PatientController {
 
     @PostMapping
     public ResponseEntity<?> createPatient(@RequestBody CreatePatientRequest request) {
-        log.info("Received request to create/update patient with phone number: {}", request.phoneNumber());
+        log.info("Received request to create/update patient with phone number: ");
         return patientService.createPatient(request);
     }
 }

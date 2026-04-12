@@ -21,6 +21,9 @@ public class Credentials extends BaseEntity {
     private String password;
     @Column(name = "google_token")
     private String googleToken;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
     @CreationTimestamp
     private LocalDateTime created_timestamp;
     @UpdateTimestamp

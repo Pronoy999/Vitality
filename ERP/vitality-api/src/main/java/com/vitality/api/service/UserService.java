@@ -45,7 +45,7 @@ public class UserService {
             } else {
                 String guid = GuidUtils.generateGuid();
                 User newUser = createUser(tokenData, guid);
-                createCredentials(tokenData.emailId(), request.getGoogleToken(), newUser);
+                createCredentials(tokenData.emailId(), request.getPhoneNumber(), request.getGoogleToken(), newUser);
                 String jwtToken = securityUtils.createJwt(tokenData.emailId(), guid);
                 LoginUserResponse response = new LoginUserResponse(jwtToken, guid);
                 return ResponseGenerator.generateSuccessResponse(response, HttpStatus.OK);
@@ -54,6 +54,30 @@ public class UserService {
             log.error("Error during user creation/login: {}", e.getMessage());
             return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while processing the request");
         }
+    }
+
+    /**
+     * Method to search for a Patient User by Either Name, phone Number or Email id. If no user is found,
+     * it creates a new user with the provided details.
+     *
+     * @param firstName:   the first name of the patient.
+     * @param lastName:    the last name of the patient.
+     * @param email:       the email of the patient.
+     * @param phoneNumber: the phone number of the patient.
+     * @return the created User entity.
+     */
+    public User searchOrCreatePatientUser(String firstName, String lastName, String email, String phoneNumber) {
+        User user = searchUserByEmailOrPhoneOrName(firstName, lastName, email, phoneNumber);
+        if (user != null) {
+            return user;
+        }
+        if (email != null || phoneNumber != null) {
+            String guid = GuidUtils.generateGuid();
+            User newUser = createUser(new TokenData(firstName, lastName, email), guid);
+            createCredentials(email, phoneNumber, null, newUser);
+            return newUser;
+        }
+        return createUser(new TokenData(firstName, lastName, null), GuidUtils.generateGuid());
     }
 
     private User createUser(TokenData tokenData, String guid) {
@@ -66,18 +90,41 @@ public class UserService {
         return newUser;
     }
 
-    private void createCredentials(String emailId, String googleToken, User user) {
+    private void createCredentials(String emailId, String phoneNumber, String googleToken, User user) {
         Credentials credentials = new Credentials();
         credentials.setUser(user);
         credentials.setEmailId(emailId);
+        credentials.setPhoneNumber(phoneNumber);
         credentials.setGoogleToken(googleToken);
         credentialsRepository.save(credentials);
     }
 
-    private User getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         Credentials credentials = credentialsRepository.findCredentialsByEmailId(email);
         if (credentials != null) {
             return credentials.getUser();
+        }
+        return null;
+    }
+
+    /**
+     * Method to search for a User by Either Name, phone Number or Email id
+     *
+     * @param firstName:   the first name of the user.
+     * @param lastName:    the last name of the user.
+     * @param email:       the email id of the user.
+     * @param phoneNumber: the phone number of the user.
+     * @return the {@link User} matching the search criteria, or null if no match is found.
+     */
+    public User searchUserByEmailOrPhoneOrName(String firstName, String lastName, String email, String phoneNumber) {
+        if (email != null || phoneNumber != null) {
+            Credentials credentials = credentialsRepository.findByEmailIdOrPhoneNumber(email, phoneNumber);
+            if (credentials != null) {
+                return credentials.getUser();
+            }
+        }
+        if (firstName != null && lastName != null) {
+            return userRepository.findByFirstNameAndLastName(firstName, lastName);
         }
         return null;
     }
