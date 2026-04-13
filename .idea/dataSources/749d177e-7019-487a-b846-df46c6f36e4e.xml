@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="Vitality">
-  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
+  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.55">
     <root id="1">
       <DateStyle>mdy</DateStyle>
       <IntrospectionStateNumber>1637</IntrospectionStateNumber>
@@ -4845,7 +4845,6 @@ false posixrules
     </schema>
     <schema id="269" parent="6" name="vitality">
       <Current>1</Current>
-      <IntrospectionStateNumber>1637</IntrospectionStateNumber>
       <LastIntrospectionLocalTimestamp>2026-01-17.14:58:05</LastIntrospectionLocalTimestamp>
       <ObjectId>41533</ObjectId>
       <StateNumber>1445</StateNumber>
