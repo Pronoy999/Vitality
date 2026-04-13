@@ -1,16 +1,13 @@
+import { apiFetch } from './api'
+
 export async function exchangeGoogleToken(idToken) {
-  const res = await fetch('http://122.166.244.91:8080/api/v1/vitality/user', {
+  const res = await apiFetch('/api/v1/vitality/user', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ googleToken: idToken }),
+    body: JSON.stringify({ token: idToken }),
   })
 
-  const data = await res.json()
-
-  localStorage.setItem('jwt', data.jwt)
-  return data
+  localStorage.setItem('jwt', res.jwt)
+  return res
 }
 
 export function getJWT() {

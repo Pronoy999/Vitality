@@ -6,6 +6,7 @@ import ReviewScreen from './components/ReviewScreen'
 import SuccessScreen from './components/SuccessScreen'
 import POScreen from './components/POScreen'
 import { exchangeGoogleToken, getJWT, isLoggedIn } from './services/auth'
+import { apiFetch } from './services/api'
 
 const s = {
   poBanner: {
@@ -52,11 +53,7 @@ export default function App() {
       if (!getJWT()) return
 
       try {
-        const res = await fetch('/api/po/pending', {
-          headers: {
-            Authorization: `Bearer ${getJWT()}`,
-          },
-        })
+        const json = await apiFetch('/api/po/pending')
         const json = await res.json()
         setPendingCount(json.count || 0)
       } catch {}
