@@ -1,4 +1,5 @@
 import React from 'react'
+import { GoogleLogin } from '@react-oauth/google'
 
 const s = {
   header: {
@@ -73,7 +74,7 @@ const s = {
   },
 }
 
-export default function Header({ activeTab, onTab, pendingCount }) {
+export default function Header({ activeTab, onTab, pendingCount, onLogin, isAuthenticated }) {
   return (
     <header style={s.header}>
       <div style={s.brand}>
@@ -89,6 +90,18 @@ export default function Header({ activeTab, onTab, pendingCount }) {
           {pendingCount > 0 && <span style={s.badge}>{pendingCount}</span>}
         </button>
       </nav>
+      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+        {!isAuthenticated ? (
+          <GoogleLogin
+            onSuccess={onLogin}
+            onError={() => console.log('Login Failed')}
+          />
+        ) : (
+          <span style={{ fontSize: '0.75rem', fontFamily: 'var(--mono)' }}>
+            Logged in
+          </span>
+        )}
+      </div>
     </header>
   )
 }

@@ -5,6 +5,7 @@ import ProgressScreen from './components/ProgressScreen'
 import ReviewScreen from './components/ReviewScreen'
 import SuccessScreen from './components/SuccessScreen'
 import POScreen from './components/POScreen'
+import { exchangeGoogleToken, getJWT, isLoggedIn } from './services/auth'
 
 const s = {
   poBanner: {
@@ -44,16 +45,26 @@ export default function App() {
   const [prescriptionId, setPrescriptionId] = useState(null)
   const [pendingCount, setPendingCount]     = useState(0)
   const [poBanner, setPOBanner]             = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn())
+
 
   const refreshPending = useCallback(async () => {
-    try {
-      const res  = await fetch('/api/po/pending')
-      const json = await res.json()
-      setPendingCount(json.count || 0)
-    } catch {}
-  }, [])
+      if (!getJWT()) return
 
-  useEffect(() => { refreshPending() }, [refreshPending])
+      try {
+        const res = await fetch('/api/po/pending', {
+          headers: {
+            Authorization: `Bearer ${getJWT()}`,
+          },
+        })
+        const json = await res.json()
+        setPendingCount(json.count || 0)
+      } catch {}
+    }, [])
+
+  useEffect(() => {
+      if (isAuthenticated) refreshPending()
+    }, [isAuthenticated, refreshPending])
 
   function handleUpload(id)    { setJobId(id); setScreen('progress') }
   function handleManual(data)  { setJobId(null); setParsedData(data); setScreen('review') }
@@ -67,10 +78,26 @@ export default function App() {
     setPOBanner(true)
     setScreen('upload')
   }
+  async function handleLogin(credentialResponse) {
+      try {
+        const idToken = credentialResponse.credential
+        await exchangeGoogleToken(idToken)
+        setIsAuthenticated(true)
+      } catch (e) {
+        console.error('Login failed', e)
+      }
+  }
+
 
   return (
     <>
-      <Header activeTab={tab} onTab={(t) => { setTab(t); setPOBanner(false) }} pendingCount={pendingCount} />
+      <Header
+          activeTab={tab}
+          onTab={(t) => { setTab(t); setPOBanner(false) }}
+          pendingCount={pendingCount}
+          onLogin={handleLogin}
+          isAuthenticated={isAuthenticated}
+        />
 
       {/* PO success flash banner shown on rx tab after generation */}
       {tab === 'rx' && poBanner && (
