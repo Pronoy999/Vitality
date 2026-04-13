@@ -7,6 +7,7 @@ import SuccessScreen from './components/SuccessScreen'
 import POScreen from './components/POScreen'
 import { exchangeGoogleToken, getJWT, isLoggedIn } from './services/auth'
 import { apiFetch } from './services/api'
+import LoginScreen from './components/LoginScreen'
 
 const s = {
   poBanner: {
@@ -54,7 +55,6 @@ export default function App() {
 
       try {
         const json = await apiFetch('/api/po/pending')
-        const json = await res.json()
         setPendingCount(json.count || 0)
       } catch {}
     }, [])
@@ -85,6 +85,9 @@ export default function App() {
       }
   }
 
+  if (!isAuthenticated) {
+     return <LoginScreen onLogin={handleLogin} />
+    }
 
   return (
     <>

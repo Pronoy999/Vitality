@@ -3,10 +3,10 @@ import { apiFetch } from './api'
 export async function exchangeGoogleToken(idToken) {
   const res = await apiFetch('/api/v1/vitality/user', {
     method: 'POST',
-    body: JSON.stringify({ token: idToken }),
+    body: JSON.stringify({ googleToken: idToken }),
   })
 
-  localStorage.setItem('jwt', res.jwt)
+  localStorage.setItem('jwt', res.jwtToken)
   return res
 }
 

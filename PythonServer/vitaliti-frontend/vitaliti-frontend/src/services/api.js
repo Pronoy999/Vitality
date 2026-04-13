@@ -1,6 +1,6 @@
 import { getJWT } from './auth'
 
-const BASE_URL = import.meta.env.BACKEND_API_BASE_URL || ''
+const BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL || ''
 
 export async function apiFetch(path, options = {}) {
   const token = getJWT()

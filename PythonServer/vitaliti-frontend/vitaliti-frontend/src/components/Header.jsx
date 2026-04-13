@@ -78,8 +78,7 @@ export default function Header({ activeTab, onTab, pendingCount, onLogin, isAuth
   return (
     <header style={s.header}>
       <div style={s.brand}>
-        <span style={s.logo}>Vitali<span style={s.accent}>ti</span></span>
-        <span style={s.tagline}>Prescription Ingestion</span>
+        <span style={s.logo}>Vitali<span style={s.accent}>ty</span></span>
       </div>
       <nav style={s.nav}>
         <button style={s.tab(activeTab === 'rx')} onClick={() => onTab('rx')}>
