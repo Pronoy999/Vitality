@@ -78,7 +78,7 @@ public class PatientService {
             return patientRepository.findByEmailId(emailId);
         }
         if (!ObjectUtils.isEmpty(firstName) && !ObjectUtils.isEmpty(lastName)) {
-            patientRepository.findByFirstNameAndLastName(firstName, lastName);
+             return patientRepository.findByFirstNameAndLastName(firstName, lastName);
         }
         return null;
     }
