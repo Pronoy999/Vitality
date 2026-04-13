@@ -9,3 +9,5 @@ create table vitality.tbl_roles_master
     created_timestamp timestamp       not null default current_timestamp,
     updated_timestamp timestamp       not null default current_timestamp
 );
+
+INSERT INTO vitality.tbl_roles_master (id,role_name) values (1,'ADMIN'),(2,'USER');

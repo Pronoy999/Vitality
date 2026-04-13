@@ -4,7 +4,6 @@ create table vitality.tbl_prescription
 (
     id                     bigint primary key    default nextval('global_sid_seq'),
     prescription_date      date         not null,
-    prescription_status    varchar(100) not null,
     prescription_image_url text                  default null,
     safety_score           int                   default null,
     patient_id             varchar(1000),

@@ -1,7 +1,7 @@
 package com.vitality.api.controllers;
 
-import com.vitality.api.service.PatientService;
-import com.vitality.common.dtos.CreatePatientRequest;
+import com.vitality.api.service.UserService;
+import com.vitality.common.dtos.CreateLoginUserRequest;
 import com.vitality.common.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @Slf4j
-@RestController("patientController")
-@RequestMapping(Constants.PATIENT_PATH)
-public class PatientController {
-    private final PatientService patientService;
+@RestController("userController")
+@RequestMapping(Constants.USER_PATH)
+public class UsersController {
+    private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> createPatient(@RequestBody CreatePatientRequest request) {
-        log.info("Received request to create/update patient with phone number: ");
-        return patientService.createPatient(request);
+    public ResponseEntity<?> createOrLoginUser(@RequestBody CreateLoginUserRequest request) {
+        log.info("Received request to create/login user");
+        return userService.createOrLoginUser(request);
     }
 }
