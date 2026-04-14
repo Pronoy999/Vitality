@@ -71,14 +71,15 @@ public final class SecurityUtils {
      */
     public JwtData decodeJwt(@NotNull final String jwt) {
         try {
-            DecodedJWT decodedJWT = JWT.decode(jwt);
+            Algorithm algorithm = Algorithm.HMAC256(key);
+            DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(jwt);
             String guid = decodedJWT.getClaim("guid").asString();
             String thirdPartyToken = "";
             if (!decodedJWT.getClaim("thirdPartyToken").isNull()) {
                 thirdPartyToken = decodedJWT.getClaim("thirdPartyToken").asString();
             }
             return new JwtData(guid, null, thirdPartyToken);
-        } catch (JWTVerificationException e) {
+        } catch (JWTVerificationException | IllegalArgumentException e) {
             throw new InvalidTokenException(e);
         }
     }

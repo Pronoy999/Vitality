@@ -11,9 +11,7 @@ import com.vitality.common.dtos.CreatePrescriptionResponse;
 import com.vitality.common.dtos.ParsedMedicineData;
 import com.vitality.common.dtos.ParsedPrescriptionData;
 import com.vitality.common.exceptions.InvalidRequestException;
-import com.vitality.common.exceptions.InvalidTokenException;
 import com.vitality.common.utils.ResponseGenerator;
-import com.vitality.common.utils.SecurityUtils;
 import com.vitality.common.utils.Validators;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +34,8 @@ public class PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final PrescriptionDiagnosisRepository prescriptionDiagnosisRepository;
     private final PatientService patientService;
-    private final SecurityUtils securityUtils;
 
-    public ResponseEntity<?> createPrescription(@NotNull CreatePrescriptionRequest request, @NotNull String jwtToken) {
-        try {
-            securityUtils.decodeJwt(jwtToken);
-        } catch (InvalidTokenException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
-            return ResponseGenerator.generateFailureResponse(HttpStatus.UNAUTHORIZED, "Invalid JWT token");
-        }
+    public ResponseEntity<?> createPrescription(@NotNull CreatePrescriptionRequest request) {
         if (ObjectUtils.isEmpty(request.getFirstName()) && ObjectUtils.isEmpty(request.getLastName())) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, "First name and last name are required to create a prescription.");
         }
