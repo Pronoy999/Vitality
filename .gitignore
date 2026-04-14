@@ -38,3 +38,7 @@ build/
 **node_modules**
 
 **dependency-reduced**
+
+### Local Spring secrets ###
+ERP/vitality-api/src/main/resources/application.properties
+ERP/vitality-api/src/main/resources/application-local.properties
