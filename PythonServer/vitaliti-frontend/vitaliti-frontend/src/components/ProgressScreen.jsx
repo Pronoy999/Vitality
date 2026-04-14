@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { getPrescriptionStatus } from '../services/api'
 
 const STEPS = [
   { key: 'uploading', label: 'Uploading images' },
@@ -74,8 +75,7 @@ export default function ProgressScreen({ jobId, onReady }) {
     if (!jobId) return
     const timer = setInterval(async () => {
       try {
-        const res  = await fetch(`/api/status/${jobId}`)
-        const json = await res.json()
+        const json = await getPrescriptionStatus(jobId)
         setStatus(json.status)
 
         if (json.status === 'ready') {

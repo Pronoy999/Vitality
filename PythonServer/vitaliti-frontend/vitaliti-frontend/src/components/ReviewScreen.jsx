@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { saveReviewedPrescription } from '../services/api'
 
 // ── Styles ────────────────────────────────────────────────────
 const s = {
@@ -146,16 +147,8 @@ export default function ReviewScreen({ jobId, initialData, onConfirmed, onReset 
         })),
       }
 
-      // jobId is null for manual entries — use the direct save endpoint
-      const url = jobId ? `/api/confirm/${jobId}` : '/api/prescriptions'
-      const res  = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: payload }),
-      })
-      const json = await res.json()
-      if (res.ok) onConfirmed(json.prescription_id)
-      else { alert('Error: ' + (json.detail || 'Unknown error')); setSaving(false) }
+      const result = await saveReviewedPrescription({ jobId, data: payload })
+      onConfirmed(result.prescription_id)
     } catch (e) {
       alert('Error: ' + e.message)
       setSaving(false)

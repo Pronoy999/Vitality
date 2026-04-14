@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { generatePurchaseOrder, getPendingPurchaseOrder } from '../services/api'
 
 // ── Styles (same design tokens as ReviewScreen) ───────────────
 const s = {
@@ -76,8 +77,7 @@ export default function POScreen({ onGenerated }) {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const res  = await fetch('/api/po/pending')
-      const json = await res.json()
+      const json = await getPendingPurchaseOrder()
       setCount(json.count)
       setMedicines(json.medicines || [])
     } finally {
@@ -102,28 +102,12 @@ export default function POScreen({ onGenerated }) {
   async function generate() {
     setGenerating(true)
     try {
-      const payload = {
-        medicines: medicines.map(m => ({
-          ...m,
-          total_quantity: m.total_quantity !== '' && m.total_quantity != null
-            ? parseInt(m.total_quantity) : null,
-        })),
-      }
-      const res = await fetch('/api/po/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.detail || 'Generation failed')
-      }
-      // Extract filename from Content-Disposition header
-      const disposition = res.headers.get('content-disposition') || ''
-      const match = disposition.match(/filename="?([^"]+)"?/)
-      const filename = match ? match[1] : 'purchase_order.pdf'
-      // Trigger download
-      const blob = await res.blob()
+      const confirmedMedicines = medicines.map(m => ({
+        ...m,
+        total_quantity: m.total_quantity !== '' && m.total_quantity != null
+          ? parseInt(m.total_quantity) : null,
+      }))
+      const { blob, filename } = await generatePurchaseOrder(confirmedMedicines)
       const url  = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url

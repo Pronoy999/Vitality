@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { uploadPrescription } from '../services/api'
 
 const SUPPORTED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
 
@@ -94,12 +95,9 @@ export default function UploadScreen({ onUpload, onManual }) {
   async function submit() {
     if (!files.length || loading) return
     setLoading(true)
-    const fd = new FormData()
-    files.forEach(f => fd.append('files', f))
     try {
-      const res  = await fetch('/api/upload', { method: 'POST', body: fd })
-      const json = await res.json()
-      onUpload(json.job_id)
+      const result = await uploadPrescription(files)
+      onUpload(result.job_id)
     } catch (e) {
       alert('Upload failed: ' + e.message)
       setLoading(false)

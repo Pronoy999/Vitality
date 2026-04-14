@@ -6,7 +6,7 @@ import ReviewScreen from './components/ReviewScreen'
 import SuccessScreen from './components/SuccessScreen'
 import POScreen from './components/POScreen'
 import { exchangeGoogleToken, getJWT, isLoggedIn } from './services/auth'
-import { apiFetch } from './services/api'
+import { getPendingPurchaseOrder } from './services/api'
 import LoginScreen from './components/LoginScreen'
 
 const s = {
@@ -54,7 +54,7 @@ export default function App() {
       if (!getJWT()) return
 
       try {
-        const json = await apiFetch('/api/po/pending')
+        const json = await getPendingPurchaseOrder()
         setPendingCount(json.count || 0)
       } catch {}
     }, [])
