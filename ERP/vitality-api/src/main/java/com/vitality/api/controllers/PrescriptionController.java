@@ -1,13 +1,14 @@
 package com.vitality.api.controllers;
 
 import com.vitality.api.service.GeminiApiService;
-import com.vitality.api.service.JwtAuthenticationService;
 import com.vitality.api.service.PrescriptionService;
 import com.vitality.common.dtos.CreatePrescriptionRequest;
+import com.vitality.common.dtos.JwtValidationResult;
 import com.vitality.common.dtos.ParsedPrescriptionData;
 import com.vitality.common.dtos.PrescriptionDataRequest;
 import com.vitality.common.utils.Constants;
 import com.vitality.common.utils.ResponseGenerator;
+import com.vitality.common.utils.SecurityUtils;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,25 +34,25 @@ public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
     private final GeminiApiService geminiApiService;
-    private final JwtAuthenticationService jwtAuthenticationService;
+    private final SecurityUtils securityUtils;
     private final Map<String, PrescriptionJob> jobs = new ConcurrentHashMap<>();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     @PostMapping(Constants.PRESCRIPTION_PATH)
     public ResponseEntity<?> createPrescription(@RequestBody CreatePrescriptionRequest request, @RequestHeader Map<String, String> httpHeaders) {
         log.info("Received request to create prescription for patient: ");
-        ResponseEntity<?> authFailure = jwtAuthenticationService.validateRequest(httpHeaders);
-        if (authFailure != null) {
-            return authFailure;
+        JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
+        if (!validationResult.valid()) {
+            return validationResult.errorResponse();
         }
         return prescriptionService.createPrescription(request);
     }
 
     @PostMapping({Constants.PRESCRIPTION_UPLOAD_PATH})
     public ResponseEntity<?> upload(@RequestParam("files") List<MultipartFile> files, @RequestHeader Map<String, String> httpHeaders) {
-        ResponseEntity<?> authFailure = jwtAuthenticationService.validateRequest(httpHeaders);
-        if (authFailure != null) {
-            return authFailure;
+        JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
+        if (!validationResult.valid()) {
+            return validationResult.errorResponse();
         }
         if (files == null || files.isEmpty()) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, "At least one prescription image is required.");
@@ -96,9 +93,9 @@ public class PrescriptionController {
 
     @GetMapping({Constants.PRESCRIPTION_STATUS_PATH})
     public ResponseEntity<?> status(@PathVariable("jobId") String jobId, @RequestHeader Map<String, String> httpHeaders) {
-        ResponseEntity<?> authFailure = jwtAuthenticationService.validateRequest(httpHeaders);
-        if (authFailure != null) {
-            return authFailure;
+        JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
+        if (!validationResult.valid()) {
+            return validationResult.errorResponse();
         }
         PrescriptionJob job = jobs.get(jobId);
         if (job == null) {
@@ -114,9 +111,9 @@ public class PrescriptionController {
 
     @PostMapping({Constants.PRESCRIPTION_CONFIRM_PATH})
     public ResponseEntity<?> confirm(@PathVariable("jobId") String jobId, @RequestBody PrescriptionDataRequest request, @RequestHeader Map<String, String> httpHeaders) {
-        ResponseEntity<?> authFailure = jwtAuthenticationService.validateRequest(httpHeaders);
-        if (authFailure != null) {
-            return authFailure;
+        JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
+        if (!validationResult.valid()) {
+            return validationResult.errorResponse();
         }
         if (!jobs.containsKey(jobId)) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.NOT_FOUND, "Job not found");
@@ -129,9 +126,9 @@ public class PrescriptionController {
 
     @PostMapping({Constants.PRESCRIPTION_MANUAL_PATH})
     public ResponseEntity<?> saveManualPrescription(@RequestBody PrescriptionDataRequest request, @RequestHeader Map<String, String> httpHeaders) {
-        ResponseEntity<?> authFailure = jwtAuthenticationService.validateRequest(httpHeaders);
-        if (authFailure != null) {
-            return authFailure;
+        JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
+        if (!validationResult.valid()) {
+            return validationResult.errorResponse();
         }
         if (request == null || request.getData() == null) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, "Prescription data is required.");
