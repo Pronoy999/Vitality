@@ -18,10 +18,10 @@ public class InvoiceItem extends BaseEntity {
     private String itemDesc;
 
     @Column(name = "received_item_qty", nullable = false)
-    private BigDecimal receivedItemQty = BigDecimal.ZERO;
+    private BigDecimal receivedItemQty;
 
     @Column(name = "damaged_item_qty")
-    private BigDecimal damagedItemQty = BigDecimal.ZERO;
+    private BigDecimal damagedItemQty;
 
     @Column(name = "item_price", nullable = false)
     private BigDecimal itemPrice;
