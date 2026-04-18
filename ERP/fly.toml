@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for vitality-server on 2026-04-18T11:59:27+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "vitality-server"
+primary_region = "bom"
+
+[build]
+image = "pronoytw/vitality:latest"
+
+[env]
+SERVER_PORT = "8080"
+
+[http_service]
+internal_port = 8080
+force_https = true
+
+auto_start_machines = true
+auto_stop_machines = false
+min_machines_running = 1
+processes = ["app"]
+
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory = "1gb"
