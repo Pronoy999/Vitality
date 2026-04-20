@@ -16,6 +16,9 @@ public class Supplier extends BaseEntity {
     @Column(name = "supplier_name", nullable = false)
     private String supplierName;
 
+    @Column(name = "supplier_address")
+    private String supplierAddress;
+
     @Column(name = "poc_name", nullable = false)
     private String pocName;
 

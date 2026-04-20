@@ -24,7 +24,22 @@ public class Invoice extends BaseEntity {
     private LocalDate receivedDate;
 
     @Column(name = "status")
-    private String status = "INVOICE_RAISED";
+    private String status = "INVOICE_GENERATED";
+
+    @Column(name = "item_total_price")
+    private BigDecimal itemTotalPrice;
+
+    @Column(name = "total_discount")
+    private BigDecimal totalDiscount;
+
+    @Column(name = "logistic_amount")
+    private BigDecimal logisticAmount;
+
+    @Column(name = "insurance_amount")
+    private BigDecimal insuranceAmount;
+
+    @Column(name = "round_off_amount")
+    private BigDecimal roundOffAmount;
 
     @Column(name = "tax_amt")
     private BigDecimal taxAmount;
@@ -44,6 +59,12 @@ public class Invoice extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "po_id", nullable = false)
     private PurchaseOrder purchaseOrder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
+
+    @OneToMany
 
 
     @PrePersist

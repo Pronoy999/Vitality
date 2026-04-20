@@ -4,6 +4,7 @@ create table vitality.tbl_supplier
 (
     id                        bigint primary key     default nextval('global_sid_seq'),
     supplier_name             varchar(1000) not null,
+    supplier_address          text                   default null,
     poc_name                  varchar(1000) not null,
     poc_contact               varchar(500)  not null,
     estimate_delivery_in_days numeric                default null,
