@@ -2,12 +2,15 @@ package com.vitality.api.service;
 
 import com.vitality.api.entities.Invoice;
 import com.vitality.api.entities.InvoiceItem;
+import com.vitality.api.entities.InvoiceStatus;
 import com.vitality.api.entities.Supplier;
 import com.vitality.api.mappers.ResponseMappers;
-import com.vitality.api.repositories.InvoiceItemRepository;
 import com.vitality.api.repositories.InvoiceRepository;
 import com.vitality.common.dtos.*;
+import com.vitality.common.exceptions.InvalidRequestException;
 import com.vitality.common.utils.ResponseGenerator;
+import com.vitality.common.utils.Validators;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @Slf4j
@@ -24,34 +29,44 @@ import java.util.List;
 public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final SupplierService supplierService;
-    private final InvoiceItemRepository invoiceItemRepository;
+    private final InventoryService inventoryService;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /**
      * Method to create the invoice.
      *
      * @param request: The invoice creation request.
      */
+    @Transactional
     public ResponseEntity<?> createInvoice(@NotNull CreateInvoiceRequest request) {
+        Validators.validateInvoiceItems(request);
+
         if (request.getSupplierId() == null && request.getSupplierName() == null) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, "Either supplier id or supplier name is required to create an invoice.");
         }
-        try {
-            Supplier supplier = getSupplier(request.getSupplierName(), request.getSupplierId());
-            Invoice invoice = getInvoiceDetails(request, supplier);
-            invoice = invoiceRepository.save(invoice);
-            log.info("Invoice created successfully with id: {}", invoice.getId());
-            List<InvoiceItem> invoiceItems = createInvoiceItem(request.getInvoiceItems(), invoice);
-            invoiceItemRepository.saveAll(invoiceItems);
-            log.info("Invoice items created successfully for: {} items", invoiceItems.size());
-            CreateInvoiceResponse response = new CreateInvoiceResponse(invoice.getId());
-            return ResponseGenerator.generateSuccessResponse(response, HttpStatus.CREATED);
-            //TODO: Update Inventory.
-        } catch (Exception e) {
-            log.error("Error creating invoice: ", e);
-            return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create invoice. Please try again later.");
+        Supplier supplier = getSupplier(request.getSupplierName(), request.getSupplierId());
+        Invoice invoice = getInvoiceDetails(request, supplier);
+        List<InvoiceItem> invoiceItems = createInvoiceItem(request.getInvoiceItems(), invoice);
+        if (invoiceItems.isEmpty()) {
+            throw new InvalidRequestException("Invoice Items can't be empty");
         }
+        invoice.setInvoiceItems(invoiceItems);
+        invoice = invoiceRepository.save(invoice);
+        log.info("Invoice created successfully with id: {} with: {} items", invoice.getId(), invoiceItems.size());
+        if (invoice.getStatus().equals(InvoiceStatus.INVOICE_DELIVERED)) {
+            log.info("Invoice Items are delivered, hence Updating Inventory.");
+            Invoice finalInvoice = invoice;
+            executorService.submit(()->inventoryService.updateInventory(finalInvoice));
+        }
+        CreateInvoiceResponse response = new CreateInvoiceResponse(invoice.getId());
+        return ResponseGenerator.generateSuccessResponse(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Method to fetch all the invoices.
+     *
+     * @return the list of {@link Invoice}
+     */
     public ResponseEntity<?> getAllInvoices() {
         try {
             List<Invoice> invoices = invoiceRepository.findAllInvoices();
@@ -70,7 +85,7 @@ public class InvoiceService {
         invoice.setInvoiceId(request.getInvoiceNumber());
         invoice.setInvoiceDate(request.getInvoiceDate());
         if (request.isAreItemsDelivered()) {
-            invoice.setStatus("DELIVERED");
+            invoice.setStatus(InvoiceStatus.INVOICE_DELIVERED);
         }
         invoice.setSupplier(supplier);
         invoice.setReceivedDate(request.getReceivedDate());

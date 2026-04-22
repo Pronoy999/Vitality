@@ -21,7 +21,7 @@ public class ResponseMappers {
         response.setInvoiceId(invoice.getInvoiceId());
         response.setInvoiceDate(invoice.getInvoiceDate());
         response.setReceivedDate(invoice.getReceivedDate());
-        response.setStatus(invoice.getStatus());
+        response.setStatus(invoice.getStatus().name());
 
         response.setItemTotalPrice(invoice.getItemTotalPrice());
         response.setTotalDiscount(invoice.getTotalDiscount());

@@ -25,7 +25,7 @@ public class Invoice extends BaseEntity {
     private LocalDate receivedDate;
 
     @Column(name = "status")
-    private String status = "INVOICE_GENERATED";
+    private InvoiceStatus status = InvoiceStatus.INVOICE_GENERATED;
 
     @Column(name = "item_total_price")
     private BigDecimal itemTotalPrice;
@@ -93,7 +93,7 @@ public class Invoice extends BaseEntity {
         }
 
         if (this.status == null) {
-            this.status = "INVOICE_RAISED";
+            this.status = InvoiceStatus.INVOICE_GENERATED;
         }
 
         if (this.taxAmount == null) {

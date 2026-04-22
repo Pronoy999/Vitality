@@ -3,6 +3,7 @@ package com.vitality.api.controllers;
 import com.vitality.api.service.InvoiceService;
 import com.vitality.common.dtos.CreateInvoiceRequest;
 import com.vitality.common.dtos.JwtValidationResult;
+import com.vitality.common.exceptions.InvalidRequestException;
 import com.vitality.common.utils.Constants;
 import com.vitality.common.utils.ResponseGenerator;
 import com.vitality.common.utils.SecurityUtils;
@@ -28,12 +29,20 @@ public class InvoiceController {
         if (!result.valid()) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.UNAUTHORIZED, "Unauthorized access. Please provide a valid token.");
         }
-        return invoiceService.createInvoice(request);
+        try {
+            return invoiceService.createInvoice(request);
+        } catch (InvalidRequestException e) {
+            log.error("Invalid request for creating invoice: ", e);
+            return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Error creating invoice: ", e);
+            return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create invoice. Please try again later.");
+        }
     }
 
     @GetMapping
     public ResponseEntity<?> getInvoice(@RequestHeader Map<String, String> httpHeaders) {
-       JwtValidationResult result = securityUtils.validateRequest(httpHeaders);
+        JwtValidationResult result = securityUtils.validateRequest(httpHeaders);
         if (!result.valid()) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.UNAUTHORIZED, "Unauthorized access. Please provide a valid token.");
         }
