@@ -3,7 +3,7 @@ drop table if exists vitality.tbl_invoice;
 create table vitality.tbl_invoice
 (
     id                bigint primary key not null default nextval('global_sid_seq'),
-    po_id             bigint             not null,
+    po_id             bigint                      default null,
     invoice_id        varchar(500)                default null,
     supplier_id       bigint                      default null,
     invoice_date      date                        default current_date,

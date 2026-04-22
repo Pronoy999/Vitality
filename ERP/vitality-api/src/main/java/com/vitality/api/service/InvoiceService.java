@@ -3,12 +3,10 @@ package com.vitality.api.service;
 import com.vitality.api.entities.Invoice;
 import com.vitality.api.entities.InvoiceItem;
 import com.vitality.api.entities.Supplier;
+import com.vitality.api.mappers.ResponseMappers;
 import com.vitality.api.repositories.InvoiceItemRepository;
 import com.vitality.api.repositories.InvoiceRepository;
-import com.vitality.common.dtos.CreateInvoiceRequest;
-import com.vitality.common.dtos.CreateInvoiceResponse;
-import com.vitality.common.dtos.CreateSupplierRequest;
-import com.vitality.common.dtos.InvoiceItemsRequest;
+import com.vitality.common.dtos.*;
 import com.vitality.common.utils.ResponseGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +49,19 @@ public class InvoiceService {
         } catch (Exception e) {
             log.error("Error creating invoice: ", e);
             return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create invoice. Please try again later.");
+        }
+    }
+
+    public ResponseEntity<?> getAllInvoices() {
+        try {
+            List<Invoice> invoices = invoiceRepository.findAllInvoices();
+            List<InvoiceResponse> response = invoices.stream()
+                    .map(ResponseMappers::mapToInvoiceResponse)
+                    .toList();
+            return ResponseGenerator.generateSuccessResponse(response, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error fetching invoices: ", e);
+            return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch invoices. Please try again later.");
         }
     }
 
@@ -102,6 +113,7 @@ public class InvoiceService {
                 invoiceItem.setItemTotalPrice(item.getItemTotalPrice());
                 invoiceItem.setMrp(item.getMrp());
                 invoiceItem.setIsActive(true);
+                invoiceItems.add(invoiceItem);
             }
         });
         return invoiceItems;

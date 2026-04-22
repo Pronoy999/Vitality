@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_invoice", schema = "vitality")
@@ -64,8 +65,23 @@ public class Invoice extends BaseEntity {
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    @OneToMany
+    @OneToMany(
+            mappedBy = "invoice",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<InvoiceItem> invoiceItems;
 
+    public void addItem(InvoiceItem item) {
+        invoiceItems.add(item);
+        item.setInvoice(this);
+    }
+
+    public void removeItem(InvoiceItem item) {
+        invoiceItems.remove(item);
+        item.setInvoice(null);
+    }
 
     @PrePersist
     protected void onCreate() {
