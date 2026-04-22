@@ -66,6 +66,7 @@ public class InventoryService {
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setManufacturingDate(invoiceItem.getManufacturedDate());
                 inventory.setSellingPrice(invoiceItem.getMrp());
+                inventory.setInvoice(invoice);
                 inventory.setUpdatedTimestamp(LocalDateTime.now());
             } else {
                 inventory = new Inventory();
