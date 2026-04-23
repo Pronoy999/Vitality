@@ -83,11 +83,14 @@ export default function ProgressScreen({ jobId, onReady }) {
           setTimeout(() => onReady(json.data), 600)
         } else if (json.status === 'error') {
           clearInterval(timer)
-          setError(json.error || 'An unknown error occurred.')
+          const message = json.error || 'An unknown error occurred.'
+          setError(message)
+          alert(message)
         }
       } catch (e) {
         clearInterval(timer)
         setError(e.message)
+        alert(e.message)
       }
     }, 1500)
     return () => clearInterval(timer)

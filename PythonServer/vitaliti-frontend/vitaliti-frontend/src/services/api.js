@@ -34,7 +34,11 @@ function buildUrl(path) {
 async function parseError(res) {
   try {
     const body = await res.json()
-    return body.message || body.detail || `API error: ${res.status}`
+    if (Array.isArray(body.errors) && body.errors.length > 0) {
+      const first = body.errors[0]
+      return first.defaultMessage || first.message || body.message || `API error: ${res.status}`
+    }
+    return body.errorMessage || body.message || body.detail || `API error: ${res.status}`
   } catch {
     return `API error: ${res.status}`
   }
