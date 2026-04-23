@@ -5,6 +5,10 @@ import ProgressScreen from './components/ProgressScreen'
 import ReviewScreen from './components/ReviewScreen'
 import SuccessScreen from './components/SuccessScreen'
 import POScreen from './components/POScreen'
+import InvoiceUploadScreen from './components/InvoiceUploadScreen'
+import InvoiceProgressScreen from './components/InvoiceProgressScreen'
+import InvoiceReviewScreen from './components/InvoiceReviewScreen'
+import InvoiceSuccessScreen from './components/InvoiceSuccessScreen'
 import { exchangeGoogleToken, getJWT, isLoggedIn } from './services/auth'
 import { getPendingPurchaseOrder } from './services/api'
 import LoginScreen from './components/LoginScreen'
@@ -48,6 +52,10 @@ export default function App() {
   const [pendingCount, setPendingCount]     = useState(0)
   const [poBanner, setPOBanner]             = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn())
+  const [invoiceScreen, setInvoiceScreen]   = useState('upload')
+  const [invoiceJobId, setInvoiceJobId]     = useState(null)
+  const [invoiceData, setInvoiceData]       = useState(null)
+  const [invoiceId, setInvoiceId]           = useState(null)
 
 
   const refreshPending = useCallback(async () => {
@@ -68,6 +76,11 @@ export default function App() {
   function handleReady(data)   { setParsedData(data); setScreen('review') }
   function handleConfirmed(id) { setPrescriptionId(id); setScreen('success'); refreshPending() }
   function reset()             { setScreen('upload'); setJobId(null); setParsedData(null); setPrescriptionId(null); setPOBanner(false) }
+  function handleInvoiceUpload(id) { setInvoiceJobId(id); setInvoiceScreen('progress') }
+  function handleInvoiceManual(data) { setInvoiceJobId(null); setInvoiceData(data); setInvoiceScreen('review') }
+  function handleInvoiceReady(data) { setInvoiceData(data); setInvoiceScreen('review') }
+  function handleInvoiceConfirmed(id) { setInvoiceId(id); setInvoiceScreen('success') }
+  function resetInvoice() { setInvoiceScreen('upload'); setInvoiceJobId(null); setInvoiceData(null); setInvoiceId(null) }
 
   function handleGenerated() {
     refreshPending()
@@ -119,6 +132,15 @@ export default function App() {
       )}
 
       {tab === 'po' && <POScreen onGenerated={handleGenerated} />}
+
+      {tab === 'invoice' && (
+        <>
+          {invoiceScreen === 'upload'   && <InvoiceUploadScreen onUpload={handleInvoiceUpload} onManual={handleInvoiceManual} />}
+          {invoiceScreen === 'progress' && <InvoiceProgressScreen jobId={invoiceJobId} onReady={handleInvoiceReady} />}
+          {invoiceScreen === 'review'   && <InvoiceReviewScreen jobId={invoiceJobId} initialData={invoiceData} onConfirmed={handleInvoiceConfirmed} onReset={resetInvoice} />}
+          {invoiceScreen === 'success'  && <InvoiceSuccessScreen invoiceId={invoiceId} onReset={resetInvoice} />}
+        </>
+      )}
     </>
   )
 }
