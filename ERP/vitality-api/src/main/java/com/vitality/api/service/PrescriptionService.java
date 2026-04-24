@@ -55,7 +55,7 @@ public class PrescriptionService {
             Patient patient = null;
             if (!ObjectUtils.isEmpty(request.getFirstName()) || !ObjectUtils.isEmpty(request.getLastName())
                     || !ObjectUtils.isEmpty(request.getPhoneNumber()) || !ObjectUtils.isEmpty(request.getEmail())) {
-                patient = patientService.searchPatient(request.getFirstName(), request.getLastName(), request.getPhoneNumber(), request.getEmail());
+                patient = patientService.searchPatient(request.getFirstName(), request.getLastName(), request.getPhoneNumber(), request.getEmail(), null);
             }
             if (patient == null && !ObjectUtils.isEmpty(request.getFirstName()) && !ObjectUtils.isEmpty(request.getLastName())) {
                 patient = patientService.doCreatePatient(request);
