@@ -1,15 +1,12 @@
 package com.vitality.common.utils;
 
-import com.vitality.common.dtos.CreateInvoiceRequest;
-import com.vitality.common.dtos.CreatePrescriptionDiagnosisRequest;
-import com.vitality.common.dtos.CreatePrescriptionRequest;
-import com.vitality.common.dtos.InvoiceItemsRequest;
+import com.vitality.common.dtos.*;
 import com.vitality.common.exceptions.InvalidRequestException;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
 
-import static org.apache.http.util.TextUtils.isBlank;
 
 public class Validators {
     public static void validatePrescriptionDiagnosis(CreatePrescriptionRequest request) {
@@ -26,7 +23,7 @@ public class Validators {
             if (diagnosis == null) {
                 throw new InvalidRequestException(prefix + "details are required.");
             }
-            if (isBlank(diagnosis.getMedicineName())) {
+            if (!StringUtils.hasLength(diagnosis.getMedicineName())) {
                 throw new InvalidRequestException(prefix + "medicine name is required.");
             }
             if (diagnosis.getStartDate() == null) {
@@ -57,10 +54,10 @@ public class Validators {
             if (item == null) {
                 throw new InvalidRequestException(prefix + "details are required.");
             }
-            if (isBlank(item.getItemDescription())) {
+            if (!StringUtils.hasLength(item.getItemDescription())) {
                 throw new InvalidRequestException(prefix + "description is required.");
             }
-            if (isBlank(item.getBatchNumber())) {
+            if (!StringUtils.hasLength(item.getBatchNumber())) {
                 throw new InvalidRequestException(prefix + "batch number is required.");
             }
             if (Objects.isNull(item.getExpiryDate())) {
@@ -75,6 +72,18 @@ public class Validators {
             if (Objects.isNull(item.getMrp())) {
                 throw new InvalidRequestException(prefix + "MRP is required.");
             }
+        }
+    }
+
+    public static void validateOrderRequest(CreateOrderRequest request) {
+        if (Objects.isNull(request)) {
+            throw new InvalidRequestException("Order request cannot be null");
+        }
+        if (!StringUtils.hasLength(request.getPatientFirstName()) && !StringUtils.hasLength(request.getPatientLastName())) {
+            throw new InvalidRequestException("Patient first name or last name cannot be empty");
+        }
+        if (Objects.isNull(request.getOrderRequestItems()) || request.getOrderRequestItems().isEmpty()) {
+            throw new InvalidRequestException("Order items cannot be empty");
         }
     }
 }

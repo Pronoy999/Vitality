@@ -70,7 +70,10 @@ public class PatientService {
      * @param emailId:     the email id of the patient.
      * @return the {@link Patient} matching the search criteria, or null if no match is found.
      */
-    public Patient searchPatient(String firstName, String lastName, String phoneNumber, String emailId) {
+    public Patient searchPatient(String firstName, String lastName, String phoneNumber, String emailId, Long patientId) {
+        if (!ObjectUtils.isEmpty(patientId)) {
+            return patientRepository.findById(patientId).orElse(null);
+        }
         if (!ObjectUtils.isEmpty(phoneNumber)) {
             return patientRepository.findByPhoneNumber(phoneNumber);
         }
@@ -78,7 +81,7 @@ public class PatientService {
             return patientRepository.findByEmailId(emailId);
         }
         if (!ObjectUtils.isEmpty(firstName) && !ObjectUtils.isEmpty(lastName)) {
-             return patientRepository.findByFirstNameAndLastName(firstName, lastName);
+            return patientRepository.findByFirstNameAndLastName(firstName, lastName);
         }
         return null;
     }

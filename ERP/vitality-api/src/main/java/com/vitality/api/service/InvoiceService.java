@@ -10,6 +10,7 @@ import com.vitality.common.dtos.*;
 import com.vitality.common.exceptions.InvalidRequestException;
 import com.vitality.common.utils.ResponseGenerator;
 import com.vitality.common.utils.Validators;
+import jakarta.annotation.PreDestroy;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -132,5 +133,10 @@ public class InvoiceService {
             }
         });
         return invoiceItems;
+    }
+
+    @PreDestroy
+    private void cleanUp() {
+        executorService.shutdownNow();
     }
 }

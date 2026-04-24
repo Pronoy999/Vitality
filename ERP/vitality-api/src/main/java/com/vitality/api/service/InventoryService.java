@@ -40,6 +40,7 @@ public class InventoryService {
                 inventoryList = getEntireInventory();
             }
             List<GetInventoryResponse> responses = ResponseMappers.mapToGetInventoryResponse(inventoryList);
+            log.info("Returning Inventory with items: {}", responses.size());
             return ResponseGenerator.generateSuccessResponse(responses, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Error fetching inventory: ", e);
@@ -75,7 +76,7 @@ public class InventoryService {
                 inventory.setQuantityAvailable(newQty);
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setManufacturingDate(invoiceItem.getManufacturedDate());
-                inventory.setSellingPrice(null);
+                inventory.setTaxPercentage(invoiceItem.getTaxPercentage());
                 inventory.setInvoice(invoice);
                 inventory.setUpdatedTimestamp(LocalDateTime.now());
             } else {
@@ -87,7 +88,7 @@ public class InventoryService {
                 inventory.setQuantityAvailable(invoiceItem.getReceivedItemQty().add(invoiceItem.getFreeItemQty()));
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setPurchasePrice(FinanceUtils.getItemPriceWithTax(invoiceItem.getItemPrice(), invoiceItem.getTaxPercentage(), null));
-                inventory.setSellingPrice(null);
+                inventory.setTaxPercentage(invoiceItem.getTaxPercentage());
                 inventory.setCreatedTimestamp(LocalDateTime.now());
                 inventory.setSupplier(invoice.getSupplier());
             }
@@ -95,5 +96,9 @@ public class InventoryService {
         });
         inventoryRepository.saveAll(toSave);
         log.info("Inventory updated successfully for invoice id: {} with items: {}", invoice.getId(), toSave.size());
+    }
+
+    protected List<Inventory> getItemsById(List<Long> ids) {
+        return inventoryRepository.findAllById(ids);
     }
 }
