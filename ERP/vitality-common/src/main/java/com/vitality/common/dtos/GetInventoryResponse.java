@@ -16,7 +16,7 @@ public class GetInventoryResponse {
     private LocalDate manufacturingDate;
     private LocalDate expiryDate;
     private BigDecimal purchasePrice;
-    private BigDecimal sellingPrice;
+    private BigDecimal taxPercentage;
     private BigDecimal mrp;
     private String supplierName;
 }

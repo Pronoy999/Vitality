@@ -88,7 +88,7 @@ public class ResponseMappers {
             response.setManufacturingDate(inventory.getManufacturingDate());
             response.setExpiryDate(inventory.getExpiryDate());
             response.setPurchasePrice(inventory.getPurchasePrice());
-            response.setSellingPrice(inventory.getSellingPrice());
+            response.setTaxPercentage(inventory.getTaxPercentage());
             response.setMrp(inventory.getMrp());
             response.setSupplierName(inventory.getSupplier().getSupplierName());
             responses.add(response);
