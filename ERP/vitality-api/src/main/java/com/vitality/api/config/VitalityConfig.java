@@ -15,7 +15,8 @@ public class VitalityConfig implements WebMvcConfigurer {
                         "http://localhost:4200",
                         "http://122.166.244.91:4200",
                         "http://localhost:5173",
-                        "http://49.205.205.114:5173"
+                        "http://49.205.205.114:5173",
+                        "https://vitaliti.fly.dev"
                 ) // allow React frontend
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

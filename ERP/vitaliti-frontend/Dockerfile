@@ -2,6 +2,8 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+ENV VITE_BACKEND_API_BASE_URL=https://vitality-server.fly.dev
+
 COPY package.json package-lock.json ./
 RUN npm ci
 
