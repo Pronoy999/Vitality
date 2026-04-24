@@ -15,6 +15,7 @@ public class Constants {
     public static final String PRESCRIPTION_MANUAL_PATH = PRESCRIPTION_PATH + "/manual";
     public static final String HEALTH_CHECK_PATH = VITALITY_API_BASE_PATH + "/health";
     public static final String INVOICE_PATH = VITALITY_API_BASE_PATH + "/invoice";
+    public static final String INVENTORY_PATH = VITALITY_API_BASE_PATH + "/inventory";
 
     public static final String JWT_HEADER_KEY = "token";
 }
