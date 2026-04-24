@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,12 +19,12 @@ public class Inventory extends BaseEntity {
     private String itemDescription;
 
     @Column(name = "quantity_available", nullable = false)
-    private Integer quantityAvailable;
+    private BigInteger quantityAvailable;
 
     @Column(name = "quantity_reserved")
-    private Integer quantityReserved;
+    private BigInteger quantityReserved;
 
-    @Column(name = "batch_number")
+    @Column(name = "batch_number", length = 1000)
     private String batchNumber;
 
     @Column(name = "manufacturing_date")
@@ -32,13 +33,13 @@ public class Inventory extends BaseEntity {
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
-    @Column(name = "purchase_price", nullable = false)
+    @Column(name = "purchase_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal purchasePrice;
 
-    @Column(name = "selling_price", nullable = false)
+    @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal sellingPrice;
 
-    @Column(name = "mrp", nullable = false)
+    @Column(name = "mrp", nullable = false, precision = 10, scale = 2)
     private BigDecimal mrp;
 
     @Column(name = "is_active", nullable = false)
@@ -49,8 +50,6 @@ public class Inventory extends BaseEntity {
 
     @Column(name = "updated_timestamp", nullable = false)
     private LocalDateTime updatedTimestamp;
-
-    // 🔗 Relationships
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", nullable = false)
@@ -66,12 +65,25 @@ public class Inventory extends BaseEntity {
         this.createdTimestamp = LocalDateTime.now();
         this.updatedTimestamp = LocalDateTime.now();
         if (this.quantityReserved == null) {
-            this.quantityReserved = 0;
+            this.quantityReserved = BigInteger.ZERO;
         }
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedTimestamp = LocalDateTime.now();
+    }
+
+    /**
+     * Method to get the unique key for the inventory item based on item description, batch number, manufacturing date and expiry date.
+     *
+     * @return the unique Key.
+     */
+    public String getKey() {
+        if (itemDescription != null && batchNumber != null && expiryDate != null) {
+            return itemDescription + "_" + batchNumber + "_" + manufacturingDate.toString() + "_" + expiryDate;
+        } else {
+            return null;
+        }
     }
 }

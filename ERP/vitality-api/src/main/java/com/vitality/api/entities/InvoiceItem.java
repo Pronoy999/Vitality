@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,10 +19,13 @@ public class InvoiceItem extends BaseEntity {
     private String itemDesc;
 
     @Column(name = "received_item_qty", nullable = false)
-    private BigDecimal receivedItemQty;
+    private BigInteger receivedItemQty;
 
     @Column(name = "damaged_item_qty")
-    private BigDecimal damagedItemQty;
+    private BigInteger damagedItemQty;
+
+    @Column(name = "free_item_qty")
+    private BigInteger freeItemQty;
 
     @Column(name = "item_price", nullable = false)
     private BigDecimal itemPrice;
@@ -37,6 +41,12 @@ public class InvoiceItem extends BaseEntity {
 
     @Column(name = "batch_number")
     private String batchNumber;
+
+    @Column(name = "tax_percentage")
+    private BigDecimal taxPercentage;
+
+    @Column(name = "item_total_price")
+    private BigDecimal itemTotalPrice;
 
     @Column(name = "mrp")
     private BigDecimal mrp;
@@ -60,11 +70,14 @@ public class InvoiceItem extends BaseEntity {
         this.updatedTimestamp = LocalDateTime.now();
 
         if (this.receivedItemQty == null) {
-            this.receivedItemQty = BigDecimal.ZERO;
+            this.receivedItemQty = BigInteger.ZERO;
         }
 
         if (this.damagedItemQty == null) {
-            this.damagedItemQty = BigDecimal.ZERO;
+            this.damagedItemQty = BigInteger.ZERO;
+        }
+        if (this.freeItemQty == null) {
+            this.freeItemQty = BigInteger.ZERO;
         }
 
         if (this.isActive == null) {

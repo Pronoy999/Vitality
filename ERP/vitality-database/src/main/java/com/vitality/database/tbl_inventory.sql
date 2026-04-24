@@ -1,8 +1,8 @@
 alter database vitality set search_path to vitality;
-drop table if exists vitality.tbl_patient_vitals cascade;
+drop table if exists vitality.tbl_inventory cascade;
 create table vitality.tbl_inventory
 (
-    sid                bigint primary key not null default nextval('global_sid_seq'),
+    id                bigint primary key not null default nextval('global_sid_seq'),
     item_desc          text               not null,
     quantity_available integer            not null,
     quantity_reserved  integer                     default 0,
@@ -26,3 +26,6 @@ alter table vitality.tbl_inventory
 alter table vitality.tbl_inventory
     add constraint fk_invoice
         foreign key (invoice_id) references vitality.tbl_invoice (id);
+
+alter table vitality.tbl_inventory
+    add constraint uk_inventory_item unique (item_desc, batch_number, expiry_date);

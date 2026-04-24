@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_invoice", schema = "vitality")
@@ -24,7 +25,22 @@ public class Invoice extends BaseEntity {
     private LocalDate receivedDate;
 
     @Column(name = "status")
-    private String status = "INVOICE_RAISED";
+    private InvoiceStatus status = InvoiceStatus.INVOICE_GENERATED;
+
+    @Column(name = "item_total_price")
+    private BigDecimal itemTotalPrice;
+
+    @Column(name = "total_discount")
+    private BigDecimal totalDiscount;
+
+    @Column(name = "logistic_amount")
+    private BigDecimal logisticAmount;
+
+    @Column(name = "insurance_amount")
+    private BigDecimal insuranceAmount;
+
+    @Column(name = "round_off_amount")
+    private BigDecimal roundOffAmount;
 
     @Column(name = "tax_amt")
     private BigDecimal taxAmount;
@@ -45,6 +61,27 @@ public class Invoice extends BaseEntity {
     @JoinColumn(name = "po_id", nullable = false)
     private PurchaseOrder purchaseOrder;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
+
+    @OneToMany(
+            mappedBy = "invoice",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<InvoiceItem> invoiceItems;
+
+    public void addItem(InvoiceItem item) {
+        invoiceItems.add(item);
+        item.setInvoice(this);
+    }
+
+    public void removeItem(InvoiceItem item) {
+        invoiceItems.remove(item);
+        item.setInvoice(null);
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -56,7 +93,7 @@ public class Invoice extends BaseEntity {
         }
 
         if (this.status == null) {
-            this.status = "INVOICE_RAISED";
+            this.status = InvoiceStatus.INVOICE_GENERATED;
         }
 
         if (this.taxAmount == null) {
