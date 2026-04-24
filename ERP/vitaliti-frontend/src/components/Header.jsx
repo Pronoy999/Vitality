@@ -88,6 +88,9 @@ export default function Header({ activeTab, onTab, pendingCount, onLogin, isAuth
           Purchase Orders
           {pendingCount > 0 && <span style={s.badge}>{pendingCount}</span>}
         </button>
+        <button style={s.tab(activeTab === 'invoice')} onClick={() => onTab('invoice')}>
+          Invoices
+        </button>
       </nav>
       <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
         {!isAuthenticated ? (

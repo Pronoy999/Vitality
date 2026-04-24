@@ -2,6 +2,7 @@ package com.vitality.api.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vitality.common.dtos.ParsedInvoiceData;
 import com.vitality.common.dtos.ParsedPrescriptionData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class GeminiApiService {
-    private static final String SYSTEM_PROMPT = """
+    private static final String PRESCRIPTION_SYSTEM_PROMPT = """
             You are a medical document parser specialising in handwritten and printed prescription images.
 
             Extract structured information from the attached prescription image(s) and return a valid JSON object.
@@ -58,7 +59,57 @@ public class GeminiApiService {
               ] | null
             }
             """;
-    private static final String USER_PROMPT = "The attached image(s) contain a medical prescription. Parse all visible information and return a JSON object matching the schema.";
+    private static final String PRESCRIPTION_USER_PROMPT = "The attached image(s) contain a medical prescription. Parse all visible information and return a JSON object matching the schema.";
+    private static final String INVOICE_SYSTEM_PROMPT = """
+            You are an invoice document parser specialising in supplier invoice images.
+
+            Extract structured information from the attached invoice image(s) and return a valid JSON object.
+
+            Rules:
+            - Extract only what is explicitly visible. Do not infer or hallucinate values.
+            - If a field is absent, illegible, or uncertain, set its value to null.
+            - Dates must be in ISO 8601 format (YYYY-MM-DD) if determinable; otherwise set to null.
+            - Numeric money, percentage, and quantity fields must be JSON numbers, not strings. Remove currency symbols and comma separators.
+            - purchaseOrderId and supplierId must be numeric IDs only when explicitly visible; otherwise set them to null.
+            - areItemsDelivered should be true only if the invoice explicitly indicates delivered/received items; otherwise false.
+            - If multiple images are provided, treat them as pages of the same invoice.
+            - Return only the JSON, no explanation, no markdown fences, no preamble.
+
+            Output schema:
+            {
+              "purchaseOrderId": integer | null,
+              "invoiceNumber": string | null,
+              "supplierName": string | null,
+              "supplierId": integer | null,
+              "invoiceDate": "YYYY-MM-DD" | null,
+              "receivedDate": "YYYY-MM-DD" | null,
+              "areItemsDelivered": boolean,
+              "itemTotalPrice": number | null,
+              "discountAmount": number | null,
+              "logisticsAmount": number | null,
+              "insuranceAmount": number | null,
+              "roundOffAmount": number | null,
+              "taxAmount": number | null,
+              "totalPrice": number | null,
+              "invoiceItems": [
+                {
+                  "itemDescription": string | null,
+                  "receivedQuantity": integer | null,
+                  "damagedQuantity": integer | null,
+                  "freeQuantity": integer | null,
+                  "itemPrice": number | null,
+                  "hsnCode": string | null,
+                  "expiryDate": "YYYY-MM-DD" | null,
+                  "manufacturedDate": "YYYY-MM-DD" | null,
+                  "batchNumber": string | null,
+                  "taxPercentage": number | null,
+                  "itemTotalPrice": number | null,
+                  "mrp": number | null
+                }
+              ] | null
+            }
+            """;
+    private static final String INVOICE_USER_PROMPT = "The attached image(s) contain a supplier invoice. Parse all visible information and return a JSON object matching the schema.";
     private static final Map<String, String> MIME_TYPES = Map.of(
             ".jpg", "image/jpeg",
             ".jpeg", "image/jpeg",
@@ -83,14 +134,20 @@ public class GeminiApiService {
     }
 
     public ParsedPrescriptionData parsePrescription(List<Path> imagePaths) throws IOException, InterruptedException {
-        String responseText = callGemini(imagePaths);
+        String responseText = callGemini(imagePaths, PRESCRIPTION_SYSTEM_PROMPT, PRESCRIPTION_USER_PROMPT);
         String cleaned = cleanJson(responseText);
         return objectMapper.readValue(cleaned, ParsedPrescriptionData.class);
     }
 
-    private String callGemini(List<Path> imagePaths) throws IOException, InterruptedException {
+    public ParsedInvoiceData parseInvoice(List<Path> imagePaths) throws IOException, InterruptedException {
+        String responseText = callGemini(imagePaths, INVOICE_SYSTEM_PROMPT, INVOICE_USER_PROMPT);
+        String cleaned = cleanJson(responseText);
+        return objectMapper.readValue(cleaned, ParsedInvoiceData.class);
+    }
+
+    private String callGemini(List<Path> imagePaths, String systemPrompt, String userPrompt) throws IOException, InterruptedException {
         String url = "https://generativelanguage.googleapis.com/v1beta/models/" + geminiModel + ":generateContent";
-        String requestBody = objectMapper.writeValueAsString(buildGeminiPayload(imagePaths));
+        String requestBody = objectMapper.writeValueAsString(buildGeminiPayload(imagePaths, systemPrompt, userPrompt));
         IOException lastIOException = null;
         InterruptedException lastInterruptedException = null;
 
@@ -133,7 +190,7 @@ public class GeminiApiService {
         throw lastIOException == null ? new IOException("Gemini request failed after retries") : lastIOException;
     }
 
-    private Map<String, Object> buildGeminiPayload(List<Path> imagePaths) throws IOException {
+    private Map<String, Object> buildGeminiPayload(List<Path> imagePaths, String systemPrompt, String userPrompt) throws IOException {
         List<Map<String, Object>> parts = new ArrayList<>();
         for (Path imagePath : imagePaths) {
             String extension = getExtension(imagePath.getFileName().toString());
@@ -141,9 +198,9 @@ public class GeminiApiService {
             String data = Base64.getEncoder().encodeToString(Files.readAllBytes(imagePath));
             parts.add(Map.of("inlineData", Map.of("mimeType", mimeType, "data", data)));
         }
-        parts.add(Map.of("text", USER_PROMPT));
+        parts.add(Map.of("text", userPrompt));
         return Map.of(
-                "systemInstruction", Map.of("parts", List.of(Map.of("text", SYSTEM_PROMPT))),
+                "systemInstruction", Map.of("parts", List.of(Map.of("text", systemPrompt))),
                 "contents", List.of(Map.of("parts", parts))
         );
     }

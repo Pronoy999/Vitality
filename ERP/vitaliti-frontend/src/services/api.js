@@ -6,6 +6,9 @@ const API_PATHS = {
   prescriptionStatus: (jobId) => `/api/v1/vitality/prescription/status/${jobId}`,
   confirmPrescription: (jobId) => `/api/v1/vitality/prescription/confirm/${jobId}`,
   manualPrescription: '/api/v1/vitality/prescription/manual',
+  uploadInvoice: '/api/v1/vitality/invoice/upload',
+  invoiceStatus: (jobId) => `/api/v1/vitality/invoice/status/${jobId}`,
+  invoice: '/api/v1/vitality/invoice',
   pendingPurchaseOrder: '/api/po/pending',
   generatePurchaseOrder: '/api/po/generate',
 }
@@ -31,7 +34,11 @@ function buildUrl(path) {
 async function parseError(res) {
   try {
     const body = await res.json()
-    return body.message || body.detail || `API error: ${res.status}`
+    if (Array.isArray(body.errors) && body.errors.length > 0) {
+      const first = body.errors[0]
+      return first.defaultMessage || first.message || body.message || `API error: ${res.status}`
+    }
+    return body.errorMessage || body.message || body.detail || `API error: ${res.status}`
   } catch {
     return `API error: ${res.status}`
   }
@@ -96,6 +103,26 @@ export function saveReviewedPrescription({ jobId, data }) {
   return apiFetch(path, {
     method: 'POST',
     body: JSON.stringify({ data }),
+  })
+}
+
+export function uploadInvoice(files) {
+  const formData = new FormData()
+  files.forEach(file => formData.append('files', file))
+  return apiFetch(API_PATHS.uploadInvoice, {
+    method: 'POST',
+    body: formData,
+  })
+}
+
+export function getInvoiceStatus(jobId) {
+  return apiFetch(API_PATHS.invoiceStatus(jobId))
+}
+
+export function saveInvoice(data) {
+  return apiFetch(API_PATHS.invoice, {
+    method: 'POST',
+    body: JSON.stringify(data),
   })
 }
 

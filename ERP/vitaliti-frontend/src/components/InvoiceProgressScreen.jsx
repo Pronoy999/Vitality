@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { getPrescriptionStatus } from '../services/api'
+import { getInvoiceStatus } from '../services/api'
 
 const STEPS = [
   { key: 'uploading', label: 'Uploading images' },
-  { key: 'parsing',   label: 'Parsing with Gemini' },
-  { key: 'ready',     label: 'Preparing review' },
+  { key: 'parsing', label: 'Parsing with Gemini' },
+  { key: 'ready', label: 'Preparing review' },
 ]
 
 const STATUS_TO_STEP = {
   uploading: 'uploading',
-  parsing:   'parsing',
-  ready:     'ready',
-  error:     'parsing',
+  parsing: 'parsing',
+  ready: 'ready',
+  error: 'parsing',
 }
 
 const s = {
@@ -28,7 +28,6 @@ const s = {
     fontSize: '0.9rem',
     color: state === 'done' ? 'var(--accent2)' : state === 'active' ? 'var(--ink)' : state === 'error' ? 'var(--accent)' : 'var(--muted)',
     fontWeight: state === 'active' ? 500 : 400,
-    transition: 'color 0.3s',
   }),
   dot: (state) => ({
     width: 10,
@@ -38,7 +37,6 @@ const s = {
     flexShrink: 0,
     background: state === 'done' ? 'var(--accent2)' : state === 'active' ? 'var(--ink)' : state === 'error' ? 'var(--accent)' : 'transparent',
     animation: state === 'active' ? 'pulse 1.2s infinite' : 'none',
-    transition: 'background 0.3s',
   }),
   errorBox: {
     marginTop: 24,
@@ -59,7 +57,7 @@ const s = {
 function stepState(stepKey, currentStatus, errorOccurred) {
   const order = ['uploading', 'parsing', 'ready']
   const currentIdx = order.indexOf(STATUS_TO_STEP[currentStatus] || 'uploading')
-  const stepIdx    = order.indexOf(stepKey)
+  const stepIdx = order.indexOf(stepKey)
 
   if (errorOccurred && stepKey === STATUS_TO_STEP[currentStatus]) return 'error'
   if (stepIdx < currentIdx) return 'done'
@@ -67,15 +65,15 @@ function stepState(stepKey, currentStatus, errorOccurred) {
   return 'pending'
 }
 
-export default function ProgressScreen({ jobId, onReady }) {
-  const [status, setStatus]   = useState('uploading')
-  const [errorMsg, setError]  = useState(null)
+export default function InvoiceProgressScreen({ jobId, onReady }) {
+  const [status, setStatus] = useState('uploading')
+  const [errorMsg, setError] = useState(null)
 
   useEffect(() => {
     if (!jobId) return
     const timer = setInterval(async () => {
       try {
-        const json = await getPrescriptionStatus(jobId)
+        const json = await getInvoiceStatus(jobId)
         setStatus(json.status)
 
         if (json.status === 'ready') {
@@ -83,22 +81,25 @@ export default function ProgressScreen({ jobId, onReady }) {
           setTimeout(() => onReady(json.data), 600)
         } else if (json.status === 'error') {
           clearInterval(timer)
-          setError(json.error || 'An unknown error occurred.')
+          const message = json.error || 'An unknown error occurred.'
+          setError(message)
+          alert(message)
         }
       } catch (e) {
         clearInterval(timer)
         setError(e.message)
+        alert(e.message)
       }
     }, 1500)
     return () => clearInterval(timer)
-  }, [jobId])
+  }, [jobId, onReady])
 
   const isError = status === 'error'
 
   return (
     <div style={s.container}>
       <div style={s.wrap}>
-        <h2 style={s.title}>Reading your prescription…</h2>
+        <h2 style={s.title}>Reading your invoice...</h2>
         <div style={s.steps}>
           {STEPS.map(({ key, label }, i) => {
             const state = stepState(key, status, isError)

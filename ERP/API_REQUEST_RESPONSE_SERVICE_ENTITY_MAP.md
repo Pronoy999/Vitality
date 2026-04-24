@@ -178,7 +178,35 @@ Use this as the first reference before changing APIs, debugging, or adding featu
   - `InvoiceItem` via `InvoiceItemRepository`
   - `Supplier` via `SupplierRepository`/`SupplierService`
 
-### 10) Invoice List (Protected)
+### 10) Invoice Upload (AI Parse Job, Protected)
+- Method + Path: `POST /api/v1/vitality/invoice/upload`
+- Controller: `InvoiceController.upload`
+- Auth: validates `token` header
+- Request: multipart form-data with `files`
+- Service flow:
+  - stores invoice images under temp `invoice_uploads/{jobId}`
+  - creates in-memory async job
+  - async task calls `GeminiApiService.parseInvoice`
+- Success response:
+  - HTTP `200`
+  - `{ "job_id": "<uuid>" }`
+- Failure response:
+  - HTTP `400` if no invoice image is provided
+  - HTTP `500` if Gemini is not configured or upload storage fails
+
+### 11) Invoice Job Status (Protected)
+- Method + Path: `GET /api/v1/vitality/invoice/status/{jobId}`
+- Controller: `InvoiceController.status`
+- Auth: validates `token` header
+- Request body: none
+- Success response:
+  - HTTP `200`
+  - `{ status, step, data, error }`
+  - `data` is `ParsedInvoiceData` when ready
+- Failure response:
+  - HTTP `404` if job is not found
+
+### 12) Invoice List (Protected)
 - Method + Path: `GET /api/v1/vitality/invoice`
 - Controller: `InvoiceController.getInvoice`
 - Auth: validates `token` header
@@ -195,6 +223,39 @@ Use this as the first reference before changing APIs, debugging, or adding featu
   - HTTP `500` on fetch errors
 - Entities + repos:
   - `Invoice`, `Supplier`, `InvoiceItem` via `InvoiceRepository`
+
+## Parsed Invoice Data Contract
+Used in invoice upload/status flow. Fields mirror `CreateInvoiceRequest`, with invoice item fields mirrored in `ParsedInvoiceItemData`.
+
+- `ParsedInvoiceData`
+  - `purchaseOrderId`
+  - `invoiceNumber`
+  - `supplierName`
+  - `supplierId`
+  - `invoiceDate`
+  - `receivedDate`
+  - `areItemsDelivered`
+  - `itemTotalPrice`
+  - `discountAmount`
+  - `logisticsAmount`
+  - `insuranceAmount`
+  - `roundOffAmount`
+  - `taxAmount`
+  - `totalPrice`
+  - `invoiceItems[]`
+- `ParsedInvoiceItemData`
+  - `itemDescription`
+  - `receivedQuantity`
+  - `damagedQuantity`
+  - `freeQuantity`
+  - `itemPrice`
+  - `hsnCode`
+  - `expiryDate`
+  - `manufacturedDate`
+  - `batchNumber`
+  - `taxPercentage`
+  - `itemTotalPrice`
+  - `mrp`
 
 ## Parsed Prescription Data Contract
 Used in upload/confirm/manual flow.
