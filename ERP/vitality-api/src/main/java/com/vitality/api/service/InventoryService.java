@@ -3,8 +3,10 @@ package com.vitality.api.service;
 import com.vitality.api.entities.Inventory;
 import com.vitality.api.entities.Invoice;
 import com.vitality.api.entities.InvoiceItem;
+import com.vitality.api.mappers.ResponseMappers;
 import com.vitality.api.repositories.InventoryRepository;
 import com.vitality.common.dtos.GetInventoryRequest;
+import com.vitality.common.dtos.GetInventoryResponse;
 import com.vitality.common.utils.CommonUtils;
 import com.vitality.common.utils.FinanceUtils;
 import com.vitality.common.utils.ResponseGenerator;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,8 +32,15 @@ public class InventoryService {
 
     public ResponseEntity<?> searchInventory(GetInventoryRequest request) {
         try {
-            Inventory inventories = inventoryRepository.findByItemDescAndBatchNumberAndExpiryDate(request.getItemDesc(), request.getBatchNumber(), request.getExpiryDate());
-            return ResponseGenerator.generateSuccessResponse(inventories, HttpStatus.OK);
+            List<Inventory> inventoryList;
+            if (request != null) {
+                Inventory inventories = inventoryRepository.findByItemDescAndBatchNumberAndExpiryDate(request.getItemDesc(), request.getBatchNumber(), request.getExpiryDate());
+                inventoryList = Collections.singletonList(inventories);
+            } else {
+                inventoryList = getEntireInventory();
+            }
+            List<GetInventoryResponse> responses = ResponseMappers.mapToGetInventoryResponse(inventoryList);
+            return ResponseGenerator.generateSuccessResponse(responses, HttpStatus.OK);
         } catch (Exception e) {
             log.error("Error fetching inventory: ", e);
             return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to fetch inventory. Please try again later.");
@@ -65,7 +75,7 @@ public class InventoryService {
                 inventory.setQuantityAvailable(newQty);
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setManufacturingDate(invoiceItem.getManufacturedDate());
-                inventory.setSellingPrice(invoiceItem.getMrp());
+                inventory.setSellingPrice(null);
                 inventory.setInvoice(invoice);
                 inventory.setUpdatedTimestamp(LocalDateTime.now());
             } else {
@@ -77,7 +87,7 @@ public class InventoryService {
                 inventory.setQuantityAvailable(invoiceItem.getReceivedItemQty().add(invoiceItem.getFreeItemQty()));
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setPurchasePrice(FinanceUtils.getItemPriceWithTax(invoiceItem.getItemPrice(), invoiceItem.getTaxPercentage(), null));
-                inventory.setSellingPrice(invoiceItem.getMrp());
+                inventory.setSellingPrice(null);
                 inventory.setCreatedTimestamp(LocalDateTime.now());
                 inventory.setSupplier(invoice.getSupplier());
             }

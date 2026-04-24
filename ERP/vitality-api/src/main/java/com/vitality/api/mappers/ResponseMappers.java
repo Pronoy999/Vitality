@@ -1,9 +1,12 @@
 package com.vitality.api.mappers;
 
+import com.vitality.api.entities.Inventory;
 import com.vitality.api.entities.Invoice;
+import com.vitality.common.dtos.GetInventoryResponse;
 import com.vitality.common.dtos.InvoiceItemResponse;
 import com.vitality.common.dtos.InvoiceResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResponseMappers {
@@ -71,5 +74,25 @@ public class ResponseMappers {
         response.setItems(items);
 
         return response;
+    }
+
+    public static List<GetInventoryResponse> mapToGetInventoryResponse(List<Inventory> inventories) {
+        List<GetInventoryResponse> responses = new ArrayList<>();
+        inventories.forEach(inventory -> {
+            GetInventoryResponse response = new GetInventoryResponse();
+            response.setInventoryId(inventory.getId());
+            response.setItemDescription(inventory.getItemDescription());
+            response.setQuantityAvailable(inventory.getQuantityAvailable());
+            response.setQuantityReserved(inventory.getQuantityReserved());
+            response.setBatchNumber(inventory.getBatchNumber());
+            response.setManufacturingDate(inventory.getManufacturingDate());
+            response.setExpiryDate(inventory.getExpiryDate());
+            response.setPurchasePrice(inventory.getPurchasePrice());
+            response.setSellingPrice(inventory.getSellingPrice());
+            response.setMrp(inventory.getMrp());
+            response.setSupplierName(inventory.getSupplier().getSupplierName());
+            responses.add(response);
+        });
+        return responses;
     }
 }

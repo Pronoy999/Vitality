@@ -56,7 +56,7 @@ public class InvoiceService {
         if (invoice.getStatus().equals(InvoiceStatus.INVOICE_DELIVERED)) {
             log.info("Invoice Items are delivered, hence Updating Inventory.");
             Invoice finalInvoice = invoice;
-            executorService.submit(()->inventoryService.updateInventory(finalInvoice));
+            executorService.submit(() -> inventoryService.updateInventory(finalInvoice));
         }
         CreateInvoiceResponse response = new CreateInvoiceResponse(invoice.getId());
         return ResponseGenerator.generateSuccessResponse(response, HttpStatus.CREATED);

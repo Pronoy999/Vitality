@@ -9,7 +9,7 @@ create table vitality.tbl_invoice_items
     damaged_item_qty  numeric                     default 0,
     free_item_qty     numeric                     default 0,
     item_price        numeric            not null,
-    hsn_code          varchar(500)       not null,
+    hsn_code          varchar(500)                default null,
     expiry_date       date                        default null,
     manufactured_date date                        default null,
     batch_number      varchar(500)                default null,
