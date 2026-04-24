@@ -9,6 +9,8 @@ import com.vitality.common.exceptions.InvalidRequestException;
 import java.util.List;
 import java.util.Objects;
 
+import static org.apache.http.util.TextUtils.isBlank;
+
 public class Validators {
     public static void validatePrescriptionDiagnosis(CreatePrescriptionRequest request) {
         if (request == null) {
@@ -74,9 +76,5 @@ public class Validators {
                 throw new InvalidRequestException(prefix + "MRP is required.");
             }
         }
-    }
-
-    private static boolean isBlank(String value) {
-        return value == null || value.isBlank();
     }
 }
