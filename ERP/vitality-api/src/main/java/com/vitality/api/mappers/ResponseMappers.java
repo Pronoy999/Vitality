@@ -1,13 +1,13 @@
 package com.vitality.api.mappers;
 
-import com.vitality.api.entities.Inventory;
-import com.vitality.api.entities.Invoice;
-import com.vitality.common.dtos.GetInventoryResponse;
-import com.vitality.common.dtos.InvoiceItemResponse;
-import com.vitality.common.dtos.InvoiceResponse;
+import com.vitality.api.entities.*;
+import com.vitality.common.dtos.*;
+import org.aspectj.weaver.ast.Or;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ResponseMappers {
     /**
@@ -88,11 +88,44 @@ public class ResponseMappers {
             response.setManufacturingDate(inventory.getManufacturingDate());
             response.setExpiryDate(inventory.getExpiryDate());
             response.setPurchasePrice(inventory.getPurchasePrice());
-            response.setSellingPrice(inventory.getSellingPrice());
+            response.setTaxPercentage(inventory.getTaxPercentage());
             response.setMrp(inventory.getMrp());
             response.setSupplierName(inventory.getSupplier().getSupplierName());
             responses.add(response);
         });
         return responses;
+    }
+
+    public static OrderInvoice mapToOrderInvoice(List<OrderInvoiceView> orderInvoiceView) {
+        if (orderInvoiceView.isEmpty()) {
+            return null;
+        }
+        OrderInvoice invoice = new OrderInvoice();
+        OrderInvoiceView first = orderInvoiceView.get(0);
+        invoice.setOrderId(first.getOrderId());
+        invoice.setOrderDate(first.getOrderDate());
+        invoice.setPatientName(first.getFirstName() + " " + first.getLastName());
+        invoice.setTotalItemPrice(first.getTotalItemPrice());
+        invoice.setTotalDiscount(first.getTotalDiscount());
+        invoice.setTotalTaxAmount(first.getTotalTaxAmount());
+        invoice.setPlatformFee(first.getPlatformFee());
+        invoice.setDeliveryFee(first.getDeliveryFee());
+        invoice.setRoundOffAmount(first.getRoundOffAmount());
+        invoice.setTotalPrice(first.getTotalPrice());
+
+        List<OrderItemInvoice> items = new ArrayList<>();
+        orderInvoiceView.forEach(item -> {
+            OrderItemInvoice itemInvoice = new OrderItemInvoice();
+            itemInvoice.setItemDescription(item.getItemDescription());
+            itemInvoice.setQuantity(item.getQuantity());
+            itemInvoice.setItemPrice(item.getItemPrice());
+            itemInvoice.setItemDiscount(item.getItemDiscount());
+            itemInvoice.setCgstAmount(item.getCgstAmount());
+            itemInvoice.setSgstAmount(item.getSgstAmount());
+            itemInvoice.setItemTotalPrice(item.getItemTotalPrice());
+            items.add(itemInvoice);
+        });
+        invoice.setItems(items);
+        return invoice;
     }
 }

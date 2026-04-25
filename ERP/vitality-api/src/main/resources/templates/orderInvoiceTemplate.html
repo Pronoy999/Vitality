@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <title>Vitality Invoice</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            color: #2e7d32;
+        }
+
+        .rx {
+            font-size: 36px;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .sub-text {
+            font-size: 11px;
+        }
+
+        .details {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .details p {
+            margin: 2px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #e8f5e9;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .no-border td {
+            border: none;
+            padding: 4px;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f1f8f4;
+        }
+
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 10px;
+            color: gray;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="rx">℞</div>
+    <h1 class="brand">Vitality</h1>
+    <p class="sub-text">A product of <b>AXON IQ</b></p>
+    <p class="sub-text">
+        <a href="https://axoniq.in/" class="brand">https://axoniq.in/</a>
+    </p>
+</div>
+
+<!-- ORDER DETAILS -->
+<div class="details">
+    <p><b>Order ID:</b> <span th:text="${order.orderId}"></span></p>
+    <p><b>Date:</b> <span th:text="${order.orderDate}"></span></p>
+    <p><b>Patient:</b> <span th:text="${order.patientName}"></span></p>
+</div>
+
+<!-- ITEMS TABLE -->
+<table>
+    <thead>
+    <tr>
+        <th>Description</th>
+        <th>Qty</th>
+        <th>Price (₹)</th>
+        <th>Discount (₹)</th>
+        <th>CGST (₹)</th>
+        <th>SGST (₹)</th>
+        <th>Total (₹)</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="item : ${order.items}">
+        <td th:text="${item.itemDescription}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${#numbers.formatDecimal(item.itemPrice, 1, 2)}"></td>
+        <td th:text="${#numbers.formatDecimal(item.itemDiscount, 1, 2)}"></td>
+        <td th:text="${#numbers.formatDecimal(item.cgstAmount, 1, 2)}"></td>
+        <td th:text="${#numbers.formatDecimal(item.sgstAmount, 1, 2)}"></td>
+        <td th:text="${#numbers.formatDecimal(item.itemTotalPrice, 1, 2)}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- TOTALS -->
+<table class="no-border">
+    <tr>
+        <td class="right">Total Item Price:</td>
+        <td class="right" th:text="${#numbers.formatDecimal(order.totalItemPrice, 1, 2)}"></td>
+    </tr>
+    <tr>
+        <td class="right">Total Discount:</td>
+        <td class="right" th:text="${#numbers.formatDecimal(order.totalDiscount, 1, 2)}"></td>
+    </tr>
+    <tr>
+        <td class="right">Total Tax:</td>
+        <td class="right" th:text="${#numbers.formatDecimal(order.totalTaxAmount, 1, 2)}"></td>
+    </tr>
+    <tr>
+        <td class="right">Platform Fee:</td>
+        <td class="right" th:text="${#numbers.formatDecimal(order.platformFee, 1, 2)}"></td>
+    </tr>
+    <tr>
+        <td class="right">Delivery Fee:</td>
+        <td class="right" th:text="${#numbers.formatDecimal(order.deliveryFee, 1, 2)}"></td>
+    </tr>
+    <tr>
+        <td class="right">Round Off:</td>
+        <td class="right" th:text="${#numbers.formatDecimal(order.roundOffAmount, 1, 2)}"></td>
+    </tr>
+    <tr class="total-row">
+        <td class="right"><b>Grand Total:</b></td>
+        <td class="right">
+            <b th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></b>
+        </td>
+    </tr>
+</table>
+
+<!-- FOOTER -->
+<div class="footer">
+    <p>This is a computer-generated invoice.</p>
+    <p>Powered by <span class="brand">Vitality</span> | AXON IQ</p>
+</div>
+
+</body>
+</html>

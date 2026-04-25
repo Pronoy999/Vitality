@@ -36,8 +36,8 @@ public class Inventory extends BaseEntity {
     @Column(name = "purchase_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal purchasePrice;
 
-    @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal sellingPrice;
+    @Column(name = "tax_percentage", nullable = false, precision = 10, scale = 2)
+    private BigDecimal taxPercentage;
 
     @Column(name = "mrp", nullable = false, precision = 10, scale = 2)
     private BigDecimal mrp;

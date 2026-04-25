@@ -26,6 +26,7 @@ public class InventoryController {
 
     @GetMapping
     public ResponseEntity<?> getInventory(@RequestHeader Map<String, String> httpHeaders) {
+        log.info("Received request to get inventory");
         JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
         if (!validationResult.valid()) {
             log.error("Invalid Request Token");

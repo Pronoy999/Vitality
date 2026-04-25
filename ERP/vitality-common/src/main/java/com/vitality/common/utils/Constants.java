@@ -18,5 +18,9 @@ public class Constants {
     public static final String INVOICE_UPLOAD_PATH = INVOICE_PATH + "/upload";
     public static final String INVOICE_STATUS_PATH = INVOICE_PATH + "/status/{jobId}";
     public static final String INVENTORY_PATH = VITALITY_API_BASE_PATH + "/inventory";
+    public static final String ORDER_PATH = VITALITY_API_BASE_PATH + "/order";
+    public static final String ORDER_INVOICE_PATH = "/invoice/{orderId}";
+
     public static final String JWT_HEADER_KEY = "token";
+    public static final String ORDER_INVOICE_FILE_NAME = "order_invoice.pdf";
 }

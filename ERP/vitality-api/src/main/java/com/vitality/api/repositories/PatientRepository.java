@@ -4,6 +4,8 @@ import com.vitality.api.entities.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     @Query("SELECT p from Patient p where p.phoneNumber=?1 and p.isActive=true")
@@ -13,7 +15,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     Patient findByUserGuid(String userGuid);
 
     @Query("SELECT p from Patient p where p.firstName=?1 and p.lastName=?2 and p.isActive=true")
-    Patient findByFirstNameAndLastName(String firstName, String lastName);
+    List<Patient> findByFirstNameAndLastName(String firstName, String lastName);
 
     @Query("SELECT p from Patient p where p.emailId=?1 and p.isActive=true")
     Patient findByEmailId(String emailId);
