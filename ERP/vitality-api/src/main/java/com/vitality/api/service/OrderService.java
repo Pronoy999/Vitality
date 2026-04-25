@@ -85,8 +85,12 @@ public class OrderService {
         List<OrderInvoiceView> orderInvoiceView = orderRepository.fetchOrderForInvoice(orderId);
         OrderInvoice orderInvoice = ResponseMappers.mapToOrderInvoice(orderInvoiceView);
         executorService.submit(() -> {
-            orderRepository.updateOrderStatusById(orderId, OrderStatus.FULFILLED.name());
-            log.info("Order status updated to FULFILLED for orderId: {}", orderId);
+            try {
+                int rowsAffected = orderRepository.updateOrderStatusById(orderId, OrderStatus.FULFILLED);
+                log.info("Order status updated to FULFILLED for orderId: {} rows affected: {}", orderId, rowsAffected);
+            } catch (Exception e) {
+                log.error("Failed to update order status for orderId: {}. Error: {}", orderId, e.getMessage());
+            }
         });
         byte[] pdfBytes = pdfGenerator.generateInvoicePdf(orderInvoice);
         return ResponseGenerator.generateSuccessMediaResponse(pdfBytes, HttpStatus.OK, Constants.ORDER_INVOICE_FILE_NAME);

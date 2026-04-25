@@ -2,7 +2,10 @@ package com.vitality.api.repositories;
 
 import com.vitality.api.entities.Order;
 import com.vitality.api.entities.OrderInvoiceView;
+import com.vitality.api.entities.OrderStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -43,11 +46,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             """)
     List<OrderInvoiceView> fetchOrderForInvoice(@Param("id") Long id);
 
+    @Modifying
+    @Transactional
     @Query("""
                 update Order o
                 set o.orderStatus = :status,
                 o.updatedTimestamp=current_timestamp
                 where o.id = :id
             """)
-    Order updateOrderStatusById(Long id, String status);
+    int updateOrderStatusById(Long id, OrderStatus status);
 }
