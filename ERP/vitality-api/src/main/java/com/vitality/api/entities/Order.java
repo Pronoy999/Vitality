@@ -69,6 +69,9 @@ public class Order extends BaseEntity {
         if (this.orderDate == null) {
             this.orderDate = LocalDate.now();
         }
+        if (isActive == null) {
+            this.isActive = true;
+        }
     }
 
     @PreUpdate

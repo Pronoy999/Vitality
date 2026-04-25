@@ -4,11 +4,9 @@ import com.vitality.api.service.OrderService;
 import com.vitality.common.dtos.CreateOrderRequest;
 import com.vitality.common.dtos.JwtValidationResult;
 import com.vitality.common.utils.Constants;
-import com.vitality.common.utils.ResponseGenerator;
 import com.vitality.common.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

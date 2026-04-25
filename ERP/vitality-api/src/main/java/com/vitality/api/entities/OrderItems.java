@@ -68,6 +68,9 @@ public class OrderItems extends BaseEntity {
     protected void onCreate() {
         this.createdTimestamp = LocalDateTime.now();
         this.updatedTimestamp = LocalDateTime.now();
+        if (this.isActive == null) {
+            this.isActive = true;
+        }
     }
 
     @PreUpdate

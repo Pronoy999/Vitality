@@ -7,6 +7,7 @@ import com.vitality.common.exceptions.InvalidRequestException;
 import com.vitality.common.utils.FinanceUtils;
 import com.vitality.common.utils.ResponseGenerator;
 import com.vitality.common.utils.Validators;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PatientService patientService;
     private final InventoryService inventoryService;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
      * Method to create the Order.
@@ -33,6 +38,7 @@ public class OrderService {
      * @param request: the order creation request.
      * @return ResponseEntity.
      */
+    @Transactional
     public ResponseEntity<?> createOrder(CreateOrderRequest request) {
         try {
             Validators.validateOrderRequest(request);
@@ -40,17 +46,21 @@ public class OrderService {
             if (Objects.nonNull(request.getPatientId())) {
                 patient = patientService.searchPatient(null, null, null, null, request.getPatientId());
             } else if (StringUtils.hasLength(request.getPatientFirstName()) || StringUtils.hasLength(request.getPatientLastName())) {
-                patient = patientService.searchPatient(request.getPatientFirstName(), request.getPatientLastName(), null, null, null);
+                patient = patientService.searchAndCreatePatient(request.getPatientFirstName(), request.getPatientLastName());
             } else {
                 throw new InvalidRequestException("Patient Name can't be empty.");
             }
             List<OrderRequestItems> orderRequestItems = request.getOrderRequestItems();
             List<OrderItems> orderItems = getAvailableOrderItems(orderRequestItems);
             Order order = getOrderDetails(request, patient, orderItems);
+            for (OrderItems item : orderItems) {
+                item.setOrder(order);
+            }
             order = orderRepository.save(order);
             log.info("Order Created with ID: {} and items: {}", order.getId(), orderItems.size());
             CreateOrderResponse response = new CreateOrderResponse();
             response.setOrderId(order.getId());
+            executorService.submit(() -> updateInventory(orderItems));
             return ResponseGenerator.generateSuccessResponse(response, HttpStatus.CREATED);
         } catch (InvalidRequestException e) {
             log.error(e.getMessage());
@@ -74,6 +84,7 @@ public class OrderService {
         order.setRoundOffAmount(orderTotalPrice.getRoundOffAmount());
         order.setTotalPrice(orderTotalPrice.getTotalPrice());
         order.setOrderStatus(OrderStatus.PROCESSING);
+        order.setTotalItems(BigInteger.valueOf(orderItems.size()));
         return order;
     }
 
@@ -107,13 +118,16 @@ public class OrderService {
                     orderItem.setItemId(inventory.getId());
                     orderItem.setQuantity(item.getQuantity());
                     BigDecimal purchasePrice = inventory.getPurchasePrice().multiply(BigDecimal.valueOf(item.getQuantity().longValue()));
-                    OrderItemPrice orderItemPrice = FinanceUtils.getOrderItemPrice(purchasePrice, inventory.getTaxPercentage(), inventory.getMrp(), item.getMarkupPercentage());
+                    BigDecimal mrp = inventory.getMrp().multiply(BigDecimal.valueOf(item.getQuantity().longValue()));
+                    OrderItemPrice orderItemPrice = FinanceUtils.getOrderItemPrice(purchasePrice, inventory.getTaxPercentage(), mrp, item.getMarkupPercentage());
                     orderItem.setSgstAmount(orderItemPrice.getSgstAmount());
                     orderItem.setSgstPercentage(orderItemPrice.getSgstPercentage());
                     orderItem.setCgstAmount(orderItemPrice.getCgstAmount());
                     orderItem.setCgstPercentage(orderItemPrice.getCgstPercentage());
                     orderItem.setTotalTaxAmount(orderItemPrice.getTotalTaxAmount());
                     orderItem.setItemTotalPrice(orderItemPrice.getTotalPrice());
+                    orderItem.setItemPrice(orderItemPrice.getTotalItemPrice());
+                    orderItem.setItemDiscount(orderItemPrice.getTotalDiscount());
                     return orderItem;
                 })
                 .collect(Collectors.toList());
@@ -139,5 +153,12 @@ public class OrderService {
         totalPrice = totalPrice.add(orderTotalPrice.getRoundOffAmount());
         orderTotalPrice.setTotalPrice(totalPrice);
         return orderTotalPrice;
+    }
+
+    private void updateInventory(List<OrderItems> orderItems) {
+        Map<Long, BigInteger> itemsSold = orderItems.stream()
+                .collect(Collectors.toMap(OrderItems::getItemId, OrderItems::getQuantity));
+        inventoryService.reduceInventoryQuantity(itemsSold);
+        log.info("Inventory updated successfully for order items: {}", orderItems.size());
     }
 }

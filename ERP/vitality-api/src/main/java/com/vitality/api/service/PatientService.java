@@ -81,8 +81,29 @@ public class PatientService {
             return patientRepository.findByEmailId(emailId);
         }
         if (!ObjectUtils.isEmpty(firstName) && !ObjectUtils.isEmpty(lastName)) {
-            return patientRepository.findByFirstNameAndLastName(firstName, lastName);
+            return patientRepository.findByFirstNameAndLastName(firstName, lastName).get(0);
         }
         return null;
+    }
+
+    /**
+     * Method to search for a patient, if it does not exist, it will create a patient.
+     *
+     * @param firstName: The firstName of the patient.
+     * @param lastName:  The lastName of the patient.
+     * @return the existing or newly created patient.
+     */
+    protected Patient searchAndCreatePatient(String firstName, String lastName) {
+        User user = userService.searchOrCreatePatientUser(firstName, lastName, null, null);
+        Patient patient = searchPatient(firstName, lastName, null, null, null);
+        if (patient != null) {
+            return patient;
+        }
+        patient = new Patient();
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
+        patient.setUser(user);
+        patient = patientRepository.save(patient);
+        return patient;
     }
 }

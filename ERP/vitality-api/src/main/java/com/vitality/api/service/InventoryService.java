@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class InventoryService {
                 inventory.setQuantityAvailable(newQty);
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setManufacturingDate(invoiceItem.getManufacturedDate());
-                inventory.setTaxPercentage(invoiceItem.getTaxPercentage());
+                inventory.setTaxPercentage(FinanceUtils.normalizePercentage(invoiceItem.getTaxPercentage()));
                 inventory.setInvoice(invoice);
                 inventory.setUpdatedTimestamp(LocalDateTime.now());
             } else {
@@ -88,7 +89,7 @@ public class InventoryService {
                 inventory.setQuantityAvailable(invoiceItem.getReceivedItemQty().add(invoiceItem.getFreeItemQty()));
                 inventory.setMrp(invoiceItem.getMrp());
                 inventory.setPurchasePrice(FinanceUtils.getItemPriceWithTax(invoiceItem.getItemPrice(), invoiceItem.getTaxPercentage(), null));
-                inventory.setTaxPercentage(invoiceItem.getTaxPercentage());
+                inventory.setTaxPercentage(FinanceUtils.normalizePercentage(invoiceItem.getTaxPercentage()));
                 inventory.setCreatedTimestamp(LocalDateTime.now());
                 inventory.setSupplier(invoice.getSupplier());
             }
@@ -100,5 +101,27 @@ public class InventoryService {
 
     protected List<Inventory> getItemsById(List<Long> ids) {
         return inventoryRepository.findAllById(ids);
+    }
+
+    /**
+     * Method to reduce the Item quantity from Inventory when an order is full-filled.
+     * It will check if the quantity is sufficient before reducing and throw an exception if the quantity goes negative.
+     *
+     * @param itemsSold: the Map of Inventory Id and quantity sold for that item.
+     */
+    protected void reduceInventoryQuantity(Map<Long, BigInteger> itemsSold) {
+        List<Inventory> inventoryList = getItemsById(new ArrayList<>(itemsSold.keySet()));
+        inventoryList.forEach(inventory -> {
+            BigInteger soldQty = itemsSold.get(inventory.getId());
+            if (soldQty != null) {
+                BigInteger newQty = inventory.getQuantityAvailable().subtract(soldQty);
+                if (newQty.compareTo(BigInteger.ZERO) < 0) {
+                    log.error("Inventory quantity for item {} can't be negative", inventory.getItemDescription());
+                    throw new RuntimeException("Inventory quantity for item " + inventory.getItemDescription() + " can't be negative");
+                }
+                inventory.setQuantityAvailable(newQty);
+            }
+        });
+        inventoryRepository.saveAll(inventoryList);
     }
 }

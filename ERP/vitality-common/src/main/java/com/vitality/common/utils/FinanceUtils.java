@@ -42,25 +42,31 @@ public class FinanceUtils {
      */
     public static OrderItemPrice getOrderItemPrice(BigDecimal purchasePrice, BigDecimal taxPercentage, BigDecimal mrp, BigDecimal markupPercentage) {
         OrderItemPrice orderItemPrice = new OrderItemPrice();
-        orderItemPrice.setTotalItemPrice(purchasePrice);
+        markupPercentage = normalizePercentage(markupPercentage);
         BigDecimal sellingPrice = purchasePrice.add(purchasePrice.multiply(markupPercentage).divide(BigDecimal.valueOf(100),
                 2, RoundingMode.HALF_UP));
+        orderItemPrice.setTotalItemPrice(sellingPrice);
         if (sellingPrice.longValue() > mrp.longValue()) {
             sellingPrice = mrp;
         } else {
             orderItemPrice.setTotalDiscount(mrp.subtract(sellingPrice));
         }
-        if (taxPercentage.equals(BigDecimal.valueOf(5))) {
+        if (taxPercentage.compareTo(BigDecimal.valueOf(5)) == 0) {
             orderItemPrice.setSgstPercentage(BigDecimal.valueOf(2.5));
             orderItemPrice.setSgstAmount(getTaxAmount(orderItemPrice.getSgstPercentage(), sellingPrice));
             orderItemPrice.setCgstPercentage(BigDecimal.valueOf(2.5));
             orderItemPrice.setCgstAmount(getTaxAmount(orderItemPrice.getCgstPercentage(), sellingPrice));
-        } else if (taxPercentage.equals(BigDecimal.valueOf(18))) {
+        } else if (taxPercentage.compareTo(BigDecimal.valueOf(12)) == 0) {
+            orderItemPrice.setSgstPercentage(BigDecimal.valueOf(6));
+            orderItemPrice.setSgstAmount(getTaxAmount(orderItemPrice.getSgstPercentage(), sellingPrice));
+            orderItemPrice.setCgstPercentage(BigDecimal.valueOf(6));
+            orderItemPrice.setCgstAmount(getTaxAmount(orderItemPrice.getCgstPercentage(), sellingPrice));
+        } else if (taxPercentage.compareTo(BigDecimal.valueOf(18)) == 0) {
             orderItemPrice.setSgstPercentage(BigDecimal.valueOf(9));
             orderItemPrice.setSgstAmount(getTaxAmount(orderItemPrice.getSgstPercentage(), sellingPrice));
             orderItemPrice.setCgstPercentage(BigDecimal.valueOf(9));
             orderItemPrice.setCgstAmount(getTaxAmount(orderItemPrice.getCgstPercentage(), sellingPrice));
-        } else if (taxPercentage.equals(BigDecimal.valueOf(28))) {
+        } else if (taxPercentage.compareTo(BigDecimal.valueOf(28)) == 0) {
             orderItemPrice.setSgstPercentage(BigDecimal.valueOf(14));
             orderItemPrice.setSgstAmount(getTaxAmount(orderItemPrice.getCgstPercentage(), sellingPrice));
             orderItemPrice.setCgstPercentage(BigDecimal.valueOf(14));
@@ -80,5 +86,15 @@ public class FinanceUtils {
     public static BigDecimal calculateRoundOffAmount(BigDecimal totalPrice) {
         BigDecimal rounded = totalPrice.setScale(0, RoundingMode.HALF_UP);
         return rounded.subtract(totalPrice).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public static BigDecimal normalizePercentage(BigDecimal value) {
+        if (value == null) {
+            return BigDecimal.ZERO;
+        }
+        if (value.compareTo(BigDecimal.ONE) <= 0) {
+            return value.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP);
+        }
+        return value.setScale(2, RoundingMode.HALF_UP);
     }
 }
