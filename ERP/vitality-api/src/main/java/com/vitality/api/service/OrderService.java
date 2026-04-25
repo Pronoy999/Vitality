@@ -1,12 +1,11 @@
 package com.vitality.api.service;
 
 import com.vitality.api.entities.*;
+import com.vitality.api.mappers.ResponseMappers;
 import com.vitality.api.repositories.OrderRepository;
 import com.vitality.common.dtos.*;
 import com.vitality.common.exceptions.InvalidRequestException;
-import com.vitality.common.utils.FinanceUtils;
-import com.vitality.common.utils.ResponseGenerator;
-import com.vitality.common.utils.Validators;
+import com.vitality.common.utils.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +29,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PatientService patientService;
     private final InventoryService inventoryService;
+    private final PDFGenerator pdfGenerator;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
@@ -69,6 +69,27 @@ public class OrderService {
             log.error(e.getMessage());
             return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong");
         }
+    }
+
+    /**
+     * Method to generate Order Invoice in PDF format.
+     *
+     * @param orderId: the ID of the order for which the invoice needs to be generated.
+     * @return ResponseEntity containing the PDF bytes of the generated invoice, along with appropriate headers for file download.
+     */
+    public ResponseEntity<?> generateOrderInvoice(Long orderId) {
+        if (Objects.isNull(orderId)) {
+            log.error("Order ID is required to generate invoice.");
+            return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, "Order ID is required.");
+        }
+        List<OrderInvoiceView> orderInvoiceView = orderRepository.fetchOrderForInvoice(orderId);
+        OrderInvoice orderInvoice = ResponseMappers.mapToOrderInvoice(orderInvoiceView);
+        executorService.submit(() -> {
+            orderRepository.updateOrderStatusById(orderId, OrderStatus.FULFILLED.name());
+            log.info("Order status updated to FULFILLED for orderId: {}", orderId);
+        });
+        byte[] pdfBytes = pdfGenerator.generateInvoicePdf(orderInvoice);
+        return ResponseGenerator.generateSuccessMediaResponse(pdfBytes, HttpStatus.OK, Constants.ORDER_INVOICE_FILE_NAME);
     }
 
     private Order getOrderDetails(CreateOrderRequest request, Patient patient, List<OrderItems> orderItems) {

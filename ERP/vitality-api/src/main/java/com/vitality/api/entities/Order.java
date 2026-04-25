@@ -26,6 +26,7 @@ public class Order extends BaseEntity {
     @Column(name = "total_items", nullable = false)
     private BigInteger totalItems;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, length = 20)
     private OrderStatus orderStatus;
 

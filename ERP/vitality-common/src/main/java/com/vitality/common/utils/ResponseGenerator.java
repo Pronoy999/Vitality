@@ -4,7 +4,9 @@ import com.vitality.common.dtos.ErrorResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -35,5 +37,20 @@ public class ResponseGenerator {
      */
     public static ResponseEntity<?> generateSuccessResponse(@NotNull final Object response, HttpStatus status) {
         return ResponseEntity.status(status).body(response);
+    }
+
+    /**
+     * Method to generate a successful media response (e.g., PDF).
+     *
+     * @param response:              the byte array of the media content.
+     * @param status:                the HTTP status code.
+     * @param fileNameWithExtension: the name of the file to be downloaded (e.g., "invoice.pdf").
+     * @return the ResponseEntity with appropriate headers for file download.
+     */
+    public static ResponseEntity<?> generateSuccessMediaResponse(final byte[] response, HttpStatus status, String fileNameWithExtension) {
+        return ResponseEntity.status(status)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileNameWithExtension)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(response);
     }
 }

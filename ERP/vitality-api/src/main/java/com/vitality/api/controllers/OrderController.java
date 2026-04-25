@@ -14,9 +14,10 @@ import java.util.Map;
 
 @RestController("orderController")
 @RequestMapping(path = Constants.ORDER_PATH)
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
+
     private final OrderService orderService;
     private final SecurityUtils securityUtils;
 
@@ -27,6 +28,18 @@ public class OrderController {
         if (!validationResult.valid()) {
             return validationResult.errorResponse();
         }
+
         return orderService.createOrder(request);
+    }
+
+    @GetMapping(Constants.ORDER_INVOICE_PATH)
+    public ResponseEntity<?> getOrderInvoice(@RequestHeader Map<String, String> httpHeaders, @PathVariable Long orderId) {
+        log.info("Request Received for Order Invoice with orderId: {}", orderId);
+        JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
+        if (!validationResult.valid()) {
+            return validationResult.errorResponse();
+        }
+
+        return orderService.generateOrderInvoice(orderId);
     }
 }
