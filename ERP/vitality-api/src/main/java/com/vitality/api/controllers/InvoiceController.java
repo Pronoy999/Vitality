@@ -105,7 +105,7 @@ public class InvoiceController {
             InvoiceJob job = new InvoiceJob(jobId, "uploading", "Uploading images...", imagePaths);
             jobs.put(jobId, job);
             executorService.submit(() -> parseInvoice(jobId));
-            return ResponseEntity.ok(Map.of("job_id", jobId));
+            return ResponseGenerator.generateSuccessResponse(Map.of("job_id", jobId), HttpStatus.OK);
         } catch (IOException e) {
             log.error("Failed to store invoice upload: {}", e.getMessage());
             return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to upload invoice images.");
