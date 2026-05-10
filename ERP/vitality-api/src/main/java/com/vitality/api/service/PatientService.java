@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -81,7 +83,10 @@ public class PatientService {
             return patientRepository.findByEmailId(emailId);
         }
         if (!ObjectUtils.isEmpty(firstName) && !ObjectUtils.isEmpty(lastName)) {
-            return patientRepository.findByFirstNameAndLastName(firstName, lastName).get(0);
+            List<Patient> patients = patientRepository.findByFirstNameAndLastName(firstName, lastName);
+            if (patients != null && !patients.isEmpty()) {
+                return patients.get(0);
+            }
         }
         return null;
     }
