@@ -66,6 +66,10 @@ public class Patient extends BaseEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "guid")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "guid")
+    private User customer;
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
@@ -73,6 +77,15 @@ public class Patient extends BaseEntity {
     private LocalDateTime created_timestamp;
     @UpdateTimestamp
     private LocalDateTime updated_timestamp;
+
+    @PrePersist
+    public void prePersist() {
+        this.created_timestamp = LocalDateTime.now();
+        this.updated_timestamp = LocalDateTime.now();
+        if (isActive == null) {
+            this.isActive = true;
+        }
+    }
 
 
     @PreUpdate

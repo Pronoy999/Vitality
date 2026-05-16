@@ -66,7 +66,7 @@ public class UserService {
      * @param phoneNumber: the phone number of the patient.
      * @return the created User entity.
      */
-    public User searchOrCreatePatientUser(String firstName, String lastName, String email, String phoneNumber) {
+    public User searchOrCreateUser(String firstName, String lastName, String email, String phoneNumber) {
         User user = searchUserByEmailOrPhoneOrName(firstName, lastName, email, phoneNumber);
         if (user != null) {
             return user;

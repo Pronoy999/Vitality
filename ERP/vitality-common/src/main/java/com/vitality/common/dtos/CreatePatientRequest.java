@@ -2,8 +2,6 @@ package com.vitality.common.dtos;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -13,7 +11,10 @@ public class CreatePatientRequest {
     private String firstName;
     @NotEmpty(message = "Last name cannot be empty")
     private String lastName;
-    private String phoneNumber;
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerPhoneNumber;
+    private String patientPhoneNumber;
     private String email;
     private Integer age;
     private BigDecimal height;

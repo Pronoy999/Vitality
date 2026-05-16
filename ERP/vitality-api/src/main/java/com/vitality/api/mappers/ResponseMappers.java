@@ -2,12 +2,11 @@ package com.vitality.api.mappers;
 
 import com.vitality.api.entities.*;
 import com.vitality.common.dtos.*;
-import org.aspectj.weaver.ast.Or;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import static com.vitality.common.utils.CommonUtils.*;
 
 public class ResponseMappers {
     /**
@@ -127,5 +126,20 @@ public class ResponseMappers {
         });
         invoice.setItems(items);
         return invoice;
+    }
+
+    public static CreatePrescriptionRequest mapToCreatePrescriptionRequest(ParsedPrescriptionData data) {
+        CreatePrescriptionRequest request = new CreatePrescriptionRequest();
+        String[] nameParts = splitPatientName(data.getPatientName());
+        request.setFirstName(nameParts[0]);
+        request.setLastName(nameParts[1]);
+        request.setAge(parseInteger(data.getPatientAge()));
+        request.setPrescriptionDate(parseDate(data.getDate()));
+        request.setReferredByDoctor(data.getDoctorName());
+        request.setDiagnosis(data.getDiagnosis());
+        request.setAdditionalDiagnosis(data.getPatientIssue());
+        request.setHealthParameters(formatHealthMetrics(data.getHealthMetrics()));
+        request.setPrescriptionDiagnoses(toDiagnosisRequests(data));
+        return request;
     }
 }

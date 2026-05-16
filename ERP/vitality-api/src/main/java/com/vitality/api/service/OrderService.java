@@ -46,7 +46,7 @@ public class OrderService {
             if (Objects.nonNull(request.getPatientId())) {
                 patient = patientService.searchPatient(null, null, null, null, request.getPatientId());
             } else if (StringUtils.hasLength(request.getPatientFirstName()) || StringUtils.hasLength(request.getPatientLastName())) {
-                patient = patientService.searchAndCreatePatient(request.getPatientFirstName(), request.getPatientLastName());
+                patient = patientService.searchAndCreatePatient(request.getPatientFirstName(), request.getPatientLastName(), request.getPatientPhoneNumber(), request.getPatientEmail());
             } else {
                 throw new InvalidRequestException("Patient Name can't be empty.");
             }

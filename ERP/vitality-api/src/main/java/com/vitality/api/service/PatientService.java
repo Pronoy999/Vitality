@@ -38,16 +38,17 @@ public class PatientService {
         return null;
     }
 
-    protected Patient doCreatePatient(@NotNull CreatePatientRequest request) {
-        User user = userService.searchOrCreatePatientUser(request.getFirstName(), request.getLastName(),
-                request.getEmail(), request.getPhoneNumber());
+    protected Patient doCreatePatient(@NotNull CreatePatientRequest request, User customer) {
+        User user = userService.searchOrCreateUser(request.getFirstName(), request.getLastName(),
+                request.getEmail(), request.getPatientPhoneNumber());
         Patient patient = new Patient();
         patient.setUser(user);
+        patient.setCustomer(customer);
         patient.setFirstName(request.getFirstName());
         patient.setLastName(request.getLastName());
         patient.setAbhaId(request.getAbhaId());
         patient.setEmailId(request.getEmail());
-        patient.setPhoneNumber(request.getPhoneNumber());
+        patient.setPhoneNumber(request.getPatientPhoneNumber());
         patient.setAge(request.getAge());
         patient.setGender(request.getGender());
         patient.setAdditionalDiagnosis(request.getAdditionalDiagnosis());
@@ -98,15 +99,17 @@ public class PatientService {
      * @param lastName:  The lastName of the patient.
      * @return the existing or newly created patient.
      */
-    protected Patient searchAndCreatePatient(String firstName, String lastName) {
-        User user = userService.searchOrCreatePatientUser(firstName, lastName, null, null);
-        Patient patient = searchPatient(firstName, lastName, null, null, null);
+    protected Patient searchAndCreatePatient(String firstName, String lastName, String phoneNumber, String emailId) {
+        User user = userService.searchOrCreateUser(firstName, lastName, emailId, phoneNumber);
+        Patient patient = searchPatient(firstName, lastName, phoneNumber, emailId, null);
         if (patient != null) {
             return patient;
         }
         patient = new Patient();
         patient.setFirstName(firstName);
         patient.setLastName(lastName);
+        patient.setPhoneNumber(phoneNumber);
+        patient.setEmailId(emailId);
         patient.setUser(user);
         patient = patientRepository.save(patient);
         return patient;

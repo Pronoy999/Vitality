@@ -11,6 +11,8 @@ public class CreateOrderRequest {
     private Long patientId;
     private String patientFirstName;
     private String patientLastName;
+    private String patientPhoneNumber;
+    private String patientEmail;
     private BigDecimal deliveryFee;
     private BigDecimal platformFee;
 }

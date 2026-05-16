@@ -1,4 +1,3 @@
-
 alter database vitality set search_path to vitality;
 drop table if exists vitality.tbl_patients cascade;
 create table vitality.tbl_patients
@@ -6,6 +5,7 @@ create table vitality.tbl_patients
     id                           bigint primary key not null default nextval('global_sid_seq'),
     user_id                      varchar(1000)               default null,
     abha_id                      varchar(1000)               default null,
+    customer_id                  varchar(1000)               default null,
     first_name                   varchar(200)       not null,
     last_name                    varchar(500)       not null,
     age                          decimal(3, 0)               default null,
@@ -29,4 +29,8 @@ create index abha_first_name_idx on tbl_patients (abha_id, first_name);
 
 alter table tbl_patients
     add constraint fk_user_id foreign key (user_id)
+        references tbl_users (guid);
+
+alter table tbl_patients
+    add constraint fk_customer_id foreign key (customer_id)
         references tbl_users (guid);

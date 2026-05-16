@@ -9,9 +9,31 @@ import java.util.Objects;
 
 
 public class Validators {
-    public static void validatePrescriptionDiagnosis(CreatePrescriptionRequest request) {
+    /**
+     * Method to validate the create Prescription Request.
+     * It throws {@link InvalidRequestException} when any of the required field is missing or invalid in the request.
+     *
+     * @param request: the request to be validated.
+     */
+    public static void validatePrescriptionCreateRequest(CreatePrescriptionRequest request) {
         if (request == null) {
             throw new InvalidRequestException("Prescription request is required.");
+        }
+        if ((request.getPatientPhoneNumber() == null || !StringUtils.hasLength(request.getPatientPhoneNumber()))) {
+            throw new InvalidRequestException("Patient phone number is required.");
+        }
+        if (StringUtils.hasLength(request.getCustomerPhoneNumber()) && request.getCustomerPhoneNumber().equals(request.getPatientPhoneNumber())) {
+            throw new InvalidRequestException("Customer phone number cannot be the same as patient phone number.");
+        }
+        if (StringUtils.hasLength(request.getCustomerPhoneNumber()) &&
+                (!StringUtils.hasLength(request.getCustomerFirstName())) && !StringUtils.hasLength(request.getCustomerLastName())) {
+            throw new InvalidRequestException("Customer first name or last name is required when customer phone number is provided.");
+        }
+        if (request.getFirstName() == null || !StringUtils.hasLength(request.getFirstName())) {
+            throw new InvalidRequestException("Patient first name is required.");
+        }
+        if (request.getLastName() == null || !StringUtils.hasLength(request.getLastName())) {
+            throw new InvalidRequestException("Patient last name is required.");
         }
         List<CreatePrescriptionDiagnosisRequest> diagnosisRequest = request.getPrescriptionDiagnoses();
         if (diagnosisRequest == null || diagnosisRequest.isEmpty()) {
