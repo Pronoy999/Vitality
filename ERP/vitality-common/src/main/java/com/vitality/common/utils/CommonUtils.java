@@ -10,10 +10,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonUtils {
@@ -98,5 +100,12 @@ public class CommonUtils {
         List<String> entries = new ArrayList<>();
         healthMetrics.forEach((key, value) -> entries.add(key + ": " + value));
         return String.join(", ", entries);
+    }
+
+    public static String safeFilename(String originalFilename) {
+        if (originalFilename == null || originalFilename.isBlank()) {
+            return GuidUtils.generateGuid() + ".jpg";
+        }
+        return Paths.get(originalFilename).getFileName().toString();
     }
 }
