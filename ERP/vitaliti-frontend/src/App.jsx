@@ -10,7 +10,7 @@ import InvoiceUploadScreen from './components/InvoiceUploadScreen'
 import InvoiceProgressScreen from './components/InvoiceProgressScreen'
 import InvoiceReviewScreen from './components/InvoiceReviewScreen'
 import InvoiceSuccessScreen from './components/InvoiceSuccessScreen'
-import { exchangeGoogleToken, getJWT, isLoggedIn } from './services/auth'
+import { exchangeGoogleToken, getJWT, isLoggedIn, logout } from './services/auth'
 import { getPendingPurchaseOrder } from './services/api'
 import LoginScreen from './components/LoginScreen'
 
@@ -89,6 +89,23 @@ export default function App() {
     setPOBanner(true)
     setScreen('upload')
   }
+
+  function handleLogout() {
+    logout()
+    setIsAuthenticated(false)
+    setTab('rx')
+    setScreen('upload')
+    setJobId(null)
+    setParsedData(null)
+    setPrescriptionId(null)
+    setPendingCount(0)
+    setPOBanner(false)
+    setInvoiceScreen('upload')
+    setInvoiceJobId(null)
+    setInvoiceData(null)
+    setInvoiceId(null)
+  }
+
   async function handleLogin(credentialResponse) {
       try {
         const idToken = credentialResponse.credential
@@ -111,6 +128,7 @@ export default function App() {
           pendingCount={pendingCount}
           onLogin={handleLogin}
           isAuthenticated={isAuthenticated}
+          onLogout={handleLogout}
         />
 
       {/* PO success flash banner shown on rx tab after generation */}

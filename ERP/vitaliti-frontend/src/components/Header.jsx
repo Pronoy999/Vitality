@@ -72,9 +72,30 @@ const s = {
     padding: '0 5px',
     fontFamily: 'var(--mono)',
   },
+  authArea: {
+    marginLeft: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+  },
+  logoutButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '9px 14px',
+    borderRadius: 'var(--radius)',
+    border: '1.5px solid var(--ink)',
+    background: 'transparent',
+    color: 'var(--ink)',
+    cursor: 'pointer',
+    fontFamily: 'var(--mono)',
+    fontSize: '0.72rem',
+    textTransform: 'uppercase',
+    letterSpacing: '0.06em',
+  },
 }
 
-export default function Header({ activeTab, onTab, pendingCount, onLogin, isAuthenticated }) {
+export default function Header({ activeTab, onTab, pendingCount, onLogin, isAuthenticated, onLogout }) {
   return (
     <header style={s.header}>
       <div style={s.brand}>
@@ -95,16 +116,18 @@ export default function Header({ activeTab, onTab, pendingCount, onLogin, isAuth
           Invoices
         </button>
       </nav>
-      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+      <div style={s.authArea}>
         {!isAuthenticated ? (
           <GoogleLogin
             onSuccess={onLogin}
             onError={() => console.log('Login Failed')}
           />
         ) : (
-          <span style={{ fontSize: '0.75rem', fontFamily: 'var(--mono)' }}>
-            Logged in
-          </span>
+          <>
+            <button style={s.logoutButton} onClick={onLogout}>
+              Logout
+            </button>
+          </>
         )}
       </div>
     </header>
