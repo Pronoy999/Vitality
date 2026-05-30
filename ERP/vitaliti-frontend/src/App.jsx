@@ -5,6 +5,7 @@ import ProgressScreen from './components/ProgressScreen'
 import ReviewScreen from './components/ReviewScreen'
 import SuccessScreen from './components/SuccessScreen'
 import POScreen from './components/POScreen'
+import OrderScreen from './components/OrderScreen'
 import InvoiceUploadScreen from './components/InvoiceUploadScreen'
 import InvoiceProgressScreen from './components/InvoiceProgressScreen'
 import InvoiceReviewScreen from './components/InvoiceReviewScreen'
@@ -132,6 +133,8 @@ export default function App() {
       )}
 
       {tab === 'po' && <POScreen onGenerated={handleGenerated} />}
+
+      {tab === 'order' && <OrderScreen />}
 
       {tab === 'invoice' && (
         <>
