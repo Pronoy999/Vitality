@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { createOrder, downloadOrderInvoice, getInventory } from '../services/api'
 
 const s = {
-  container: { maxWidth: 1180, margin: '0 auto', padding: '48px 24px 120px' },
+  container: { maxWidth: 1480, margin: '0 auto', padding: '48px 24px 120px' },
   topBar: {
     display: 'flex',
     alignItems: 'baseline',
@@ -53,11 +53,12 @@ const s = {
   },
   statValue: { fontFamily: 'var(--serif)', fontSize: '2rem', lineHeight: 1.1 },
   statSub: { fontSize: '0.78rem', color: 'var(--muted)', marginTop: 4 },
-  layout: {
+  detailLayout: {
     display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1.8fr) minmax(320px, 1fr)',
+    gridTemplateColumns: 'minmax(0, 1.2fr) minmax(320px, 0.8fr)',
     gap: 20,
     alignItems: 'start',
+    marginTop: 20,
   },
   section: {
     background: 'var(--white)',
@@ -102,7 +103,7 @@ const s = {
     outline: 'none',
   },
   tableWrap: { overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', minWidth: 760 },
+  table: { width: '100%', borderCollapse: 'collapse', minWidth: 1120 },
   th: {
     padding: '10px 14px',
     textAlign: 'left',
@@ -166,7 +167,6 @@ const s = {
   },
   sideBody: { padding: 18, display: 'grid', gap: 18 },
   fieldsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 },
-  fieldFull: { gridColumn: '1 / -1' },
   fieldLabel: {
     fontFamily: 'var(--mono)',
     fontSize: '0.68rem',
@@ -217,6 +217,34 @@ const s = {
   },
   lineName: { fontWeight: 500, fontSize: '0.9rem' },
   lineMeta: { fontSize: '0.76rem', color: 'var(--muted)' },
+  createdOrders: {
+    display: 'grid',
+    gap: 12,
+  },
+  createdOrderCard: {
+    border: '1px solid var(--rule)',
+    borderRadius: 'var(--radius)',
+    padding: '14px 16px',
+    background: '#fbf8f2',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 16,
+    flexWrap: 'wrap',
+  },
+  createdOrderMeta: {
+    display: 'grid',
+    gap: 4,
+  },
+  createdOrderId: {
+    fontFamily: 'var(--mono)',
+    fontSize: '0.95rem',
+    color: 'var(--ink)',
+  },
+  createdOrderSub: {
+    fontSize: '0.78rem',
+    color: 'var(--muted)',
+  },
   btnRow: { display: 'flex', gap: 12, flexWrap: 'wrap' },
   btnSecondary: {
     display: 'inline-flex',
@@ -301,10 +329,12 @@ function getAvailableQuantity(item) {
 export default function OrderScreen() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [downloadingOrderId, setDownloadingOrderId] = useState(null)
   const [inventory, setInventory] = useState([])
   const [search, setSearch] = useState('')
   const [quantities, setQuantities] = useState({})
   const [markups, setMarkups] = useState({})
+  const [createdOrders, setCreatedOrders] = useState([])
   const [patient, setPatient] = useState({
     patientFirstName: '',
     patientLastName: '',
@@ -392,6 +422,20 @@ export default function OrderScreen() {
     setMarkups({})
   }
 
+  async function handleInvoiceDownload(orderId) {
+    setDownloadingOrderId(orderId)
+    setMessage(null)
+    try {
+      const { blob, filename } = await downloadOrderInvoice(orderId)
+      downloadBlob(blob, filename)
+      setMessage({ tone: 'success', text: `Invoice downloaded for order ${orderId}.` })
+    } catch (error) {
+      setMessage({ tone: 'error', text: error.message })
+    } finally {
+      setDownloadingOrderId(null)
+    }
+  }
+
   async function placeOrder() {
     if (selectedItems.length === 0) {
       setMessage({ tone: 'error', text: 'Select at least one inventory item before placing the order.' })
@@ -420,10 +464,18 @@ export default function OrderScreen() {
       }
 
       const { orderId } = await createOrder(payload)
-      const { blob, filename } = await downloadOrderInvoice(orderId)
-      downloadBlob(blob, filename)
+      setCreatedOrders(current => [
+        {
+          orderId,
+          patientName: `${patient.patientFirstName.trim()} ${patient.patientLastName.trim()}`.trim(),
+          itemCount: selectedItems.length,
+          units: selectedUnits,
+          total: estimatedTotal,
+        },
+        ...current,
+      ])
       clearSelection()
-      setMessage({ tone: 'success', text: `Order ${orderId} created and invoice downloaded.` })
+      setMessage({ tone: 'success', text: `Order ${orderId} created. Use the created orders section to download its invoice.` })
       await loadInventory({ preserveMessage: true })
     } catch (error) {
       setMessage({ tone: 'error', text: error.message })
@@ -440,7 +492,7 @@ export default function OrderScreen() {
     <div style={s.container}>
       <div style={s.topBar}>
         <h2 style={s.title}>Orders</h2>
-        <span style={s.hint}>Select inventory, set quantities, place order, download invoice</span>
+        <span style={s.hint}>Select inventory, set quantities, place order, download invoice when needed</span>
       </div>
 
       {message && (
@@ -472,92 +524,92 @@ export default function OrderScreen() {
         </div>
       </div>
 
-      <div style={s.layout}>
-        <div style={s.section}>
-          <div style={s.sectionHead}>
-            <span>Inventory</span>
-            <span>{filteredInventory.length} visible</span>
-          </div>
-          <div style={s.toolbar}>
-            <input
-              style={s.search}
-              value={search}
-              placeholder="Search by item, batch, or supplier"
-              onChange={event => setSearch(event.target.value)}
-            />
-            <button style={s.btnSecondary} onClick={loadInventory}>Refresh</button>
-          </div>
-          {filteredInventory.length === 0 ? (
-            <div style={s.empty}>No inventory items matched the current filter.</div>
-          ) : (
-            <div style={s.tableWrap}>
-              <table style={s.table}>
-                <thead>
-                  <tr>
-                    <th style={s.th}>Item</th>
-                    <th style={s.th}>Stock</th>
-                    <th style={s.th}>MRP</th>
-                    <th style={s.th}>Purchase</th>
-                    <th style={s.th}>Markup %</th>
-                    <th style={s.th}>Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredInventory.map(item => {
-                    const available = getAvailableQuantity(item)
-                    const quantity = Number(quantities[item.inventoryId] || 0)
-                    return (
-                      <tr key={item.inventoryId}>
-                        <td style={s.td}>
-                          <div style={s.itemTitle}>{item.itemDescription}</div>
-                          <div style={s.itemMeta}>
-                            Batch {item.batchNumber || '-'} | Supplier {item.supplierName || '-'} | Exp {item.expiryDate || '-'}
-                          </div>
-                        </td>
-                        <td style={s.td}>
-                          <div>{available}</div>
-                          <div style={s.muted}>reserved {Number(item.quantityReserved || 0)}</div>
-                        </td>
-                        <td style={s.td}>{formatCurrency(item.mrp)}</td>
-                        <td style={s.td}>{formatCurrency(item.purchasePrice)}</td>
-                        <td style={s.td}>
-                          <input
-                            style={s.markupInput}
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={markups[item.inventoryId] ?? '0'}
-                            onChange={event => setMarkup(item.inventoryId, event.target.value)}
-                          />
-                        </td>
-                        <td style={s.td}>
-                          <div style={s.qtyControl}>
-                            <button
-                              style={s.qtyButton}
-                              onClick={() => adjustQuantity(item, -1)}
-                              disabled={quantity === 0}
-                            >
-                              -
-                            </button>
-                            <span style={s.qtyValue}>{quantity}</span>
-                            <button
-                              style={s.qtyButton}
-                              onClick={() => adjustQuantity(item, 1)}
-                              disabled={quantity >= available}
-                            >
-                              +
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+      <div style={s.section}>
+        <div style={s.sectionHead}>
+          <span>Inventory</span>
+          <span>{filteredInventory.length} visible</span>
         </div>
+        <div style={s.toolbar}>
+          <input
+            style={s.search}
+            value={search}
+            placeholder="Search by item, batch, or supplier"
+            onChange={event => setSearch(event.target.value)}
+          />
+          <button style={s.btnSecondary} onClick={loadInventory}>Refresh</button>
+        </div>
+        {filteredInventory.length === 0 ? (
+          <div style={s.empty}>No inventory items matched the current filter.</div>
+        ) : (
+          <div style={s.tableWrap}>
+            <table style={s.table}>
+              <thead>
+                <tr>
+                  <th style={s.th}>Item</th>
+                  <th style={s.th}>Stock</th>
+                  <th style={s.th}>MRP</th>
+                  <th style={s.th}>Purchase</th>
+                  <th style={s.th}>Markup %</th>
+                  <th style={s.th}>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredInventory.map(item => {
+                  const available = getAvailableQuantity(item)
+                  const quantity = Number(quantities[item.inventoryId] || 0)
+                  return (
+                    <tr key={item.inventoryId}>
+                      <td style={s.td}>
+                        <div style={s.itemTitle}>{item.itemDescription}</div>
+                        <div style={s.itemMeta}>
+                          Batch {item.batchNumber || '-'} | Supplier {item.supplierName || '-'} | Exp {item.expiryDate || '-'}
+                        </div>
+                      </td>
+                      <td style={s.td}>
+                        <div>{available}</div>
+                        <div style={s.muted}>reserved {Number(item.quantityReserved || 0)}</div>
+                      </td>
+                      <td style={s.td}>{formatCurrency(item.mrp)}</td>
+                      <td style={s.td}>{formatCurrency(item.purchasePrice)}</td>
+                      <td style={s.td}>
+                        <input
+                          style={s.markupInput}
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={markups[item.inventoryId] ?? '0'}
+                          onChange={event => setMarkup(item.inventoryId, event.target.value)}
+                        />
+                      </td>
+                      <td style={s.td}>
+                        <div style={s.qtyControl}>
+                          <button
+                            style={s.qtyButton}
+                            onClick={() => adjustQuantity(item, -1)}
+                            disabled={quantity === 0}
+                          >
+                            -
+                          </button>
+                          <span style={s.qtyValue}>{quantity}</span>
+                          <button
+                            style={s.qtyButton}
+                            onClick={() => adjustQuantity(item, 1)}
+                            disabled={quantity >= available}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
+      <div style={s.detailLayout}>
         <div style={s.section}>
           <div style={s.sectionHead}>Order Summary</div>
           <div style={s.sideBody}>
@@ -669,9 +721,43 @@ export default function OrderScreen() {
                 disabled={submitting}
                 onClick={placeOrder}
               >
-                {submitting ? 'Placing Order...' : 'Place Order & Download Invoice'}
+                {submitting ? 'Placing Order...' : 'Place Order'}
               </button>
             </div>
+          </div>
+        </div>
+
+        <div style={s.section}>
+          <div style={s.sectionHead}>Created Orders</div>
+          <div style={s.sideBody}>
+            {createdOrders.length === 0 ? (
+              <div style={s.empty}>Orders created from this screen will appear here.</div>
+            ) : (
+              <div style={s.createdOrders}>
+                {createdOrders.map(order => (
+                  <div key={order.orderId} style={s.createdOrderCard}>
+                    <div style={s.createdOrderMeta}>
+                      <div style={s.createdOrderId}>Order #{order.orderId}</div>
+                      <div style={s.createdOrderSub}>
+                        {order.patientName || 'Patient not provided'} | {order.itemCount} line(s) | {order.units} unit(s) | {formatCurrency(order.total)}
+                      </div>
+                    </div>
+                    <button
+                      style={{
+                        ...s.btnPrimary,
+                        padding: '10px 16px',
+                        opacity: downloadingOrderId === order.orderId ? 0.5 : 1,
+                        cursor: downloadingOrderId === order.orderId ? 'not-allowed' : 'pointer',
+                      }}
+                      disabled={downloadingOrderId === order.orderId}
+                      onClick={() => handleInvoiceDownload(order.orderId)}
+                    >
+                      {downloadingOrderId === order.orderId ? 'Downloading...' : 'Download Bill'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
