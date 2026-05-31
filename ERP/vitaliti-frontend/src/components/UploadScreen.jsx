@@ -2,14 +2,21 @@ import React, { useRef, useState } from 'react'
 import { uploadPrescription } from '../services/api'
 
 const SUPPORTED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
+const TODAY = new Date().toISOString().slice(0, 10)
 
 const EMPTY_PRESCRIPTION = {
   patient_name:   null,
+  patient_first_name: null,
+  patient_last_name: null,
   patient_age:    null,
+  patient_phone_number: null,
   doctor_name:    null,
-  date:           null,
+  date:           TODAY,
   patient_issue:  null,
   diagnosis:      null,
+  customer_first_name: null,
+  customer_last_name: null,
+  customer_phone_number: null,
   health_metrics: {},
   medicines:      [],
 }
