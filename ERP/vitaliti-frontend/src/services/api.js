@@ -2,6 +2,9 @@ const BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL || ''
 
 const API_PATHS = {
   login: '/api/v1/vitality/user',
+  inventory: '/api/v1/vitality/inventory',
+  order: '/api/v1/vitality/order',
+  orderInvoice: (orderId) => `/api/v1/vitality/order/invoice/${orderId}`,
   uploadPrescription: '/api/v1/vitality/prescription/upload',
   prescriptionStatus: (jobId) => `/api/v1/vitality/prescription/status/${jobId}`,
   confirmPrescription: (jobId) => `/api/v1/vitality/prescription/confirm/${jobId}`,
@@ -80,6 +83,26 @@ export function loginWithGoogleToken(idToken) {
     method: 'POST',
     body: JSON.stringify({ googleToken: idToken }),
   })
+}
+
+export function getInventory() {
+  return apiFetch(API_PATHS.inventory)
+}
+
+export function createOrder(payload) {
+  return apiFetch(API_PATHS.order, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export async function downloadOrderInvoice(orderId) {
+  return apiFetch(API_PATHS.orderInvoice(orderId), {
+    responseType: 'blob',
+  }).then(({ blob, filename }) => ({
+    blob,
+    filename: filename === 'download' ? `order-${orderId}-invoice.pdf` : filename,
+  }))
 }
 
 export function uploadPrescription(files) {
