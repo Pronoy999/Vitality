@@ -505,7 +505,7 @@ export default function OrderScreen() {
         <div style={s.statCard}>
           <div style={s.statLabel}>Inventory Lines</div>
           <div style={s.statValue}>{inventory.length}</div>
-          <div style={s.statSub}>items returned by inventory API</div>
+          <div style={s.statSub}>items in inventory</div>
         </div>
         <div style={s.statCard}>
           <div style={s.statLabel}>Selected Lines</div>
