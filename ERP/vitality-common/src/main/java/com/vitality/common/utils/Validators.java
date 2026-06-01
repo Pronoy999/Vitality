@@ -19,8 +19,9 @@ public class Validators {
         if (request == null) {
             throw new InvalidRequestException("Prescription request is required.");
         }
-        if ((request.getPatientPhoneNumber() == null || !StringUtils.hasLength(request.getPatientPhoneNumber()))) {
-            throw new InvalidRequestException("Patient phone number is required.");
+        if (((request.getPatientPhoneNumber() == null || !StringUtils.hasLength(request.getPatientPhoneNumber()))) ||
+                (request.getCustomerPhoneNumber() == null || !StringUtils.hasLength(request.getCustomerPhoneNumber()))) {
+            throw new InvalidRequestException("Patient or customer phone number is required.");
         }
         if (StringUtils.hasLength(request.getCustomerPhoneNumber()) && request.getCustomerPhoneNumber().equals(request.getPatientPhoneNumber())) {
             throw new InvalidRequestException("Customer phone number cannot be the same as patient phone number.");
