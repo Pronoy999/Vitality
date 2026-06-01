@@ -2,6 +2,7 @@ package com.vitality.common.utils;
 
 import com.vitality.common.dtos.*;
 import com.vitality.common.exceptions.InvalidRequestException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -73,29 +74,34 @@ public class Validators {
         }
         for (int i = 0; i < invoiceItems.size(); i++) {
             InvoiceItemsRequest item = invoiceItems.get(i);
-            String prefix = "Invoice item " + (i + 1) + ": ";
-            if (item == null) {
-                throw new InvalidRequestException(prefix + "details are required.");
-            }
-            if (!StringUtils.hasLength(item.getItemDescription())) {
-                throw new InvalidRequestException(prefix + "description is required.");
-            }
-            if (!StringUtils.hasLength(item.getBatchNumber())) {
-                throw new InvalidRequestException(prefix + "batch number is required.");
-            }
-            if (Objects.isNull(item.getExpiryDate())) {
-                throw new InvalidRequestException(prefix + "expiry date is required.");
-            }
-            if (Objects.isNull(item.getItemPrice())) {
-                throw new InvalidRequestException(prefix + "item price is required.");
-            }
-            if (Objects.isNull(item.getItemTotalPrice())) {
-                throw new InvalidRequestException(prefix + "line total is required.");
-            }
+            String prefix = getInvoiceItemsErrorPrefix(i, item);
             if (Objects.isNull(item.getMrp())) {
                 throw new InvalidRequestException(prefix + "MRP is required.");
             }
         }
+    }
+
+    private static @NotNull String getInvoiceItemsErrorPrefix(int i, InvoiceItemsRequest item) {
+        String prefix = "Invoice item " + (i + 1) + ": ";
+        if (item == null) {
+            throw new InvalidRequestException(prefix + "details are required.");
+        }
+        if (!StringUtils.hasLength(item.getItemDescription())) {
+            throw new InvalidRequestException(prefix + "description is required.");
+        }
+        if (!StringUtils.hasLength(item.getBatchNumber())) {
+            throw new InvalidRequestException(prefix + "batch number is required.");
+        }
+        if (Objects.isNull(item.getExpiryDate())) {
+            throw new InvalidRequestException(prefix + "expiry date is required.");
+        }
+        if (Objects.isNull(item.getItemPrice())) {
+            throw new InvalidRequestException(prefix + "item price is required.");
+        }
+        if (Objects.isNull(item.getItemTotalPrice())) {
+            throw new InvalidRequestException(prefix + "line total is required.");
+        }
+        return prefix;
     }
 
     public static void validateOrderRequest(CreateOrderRequest request) {
