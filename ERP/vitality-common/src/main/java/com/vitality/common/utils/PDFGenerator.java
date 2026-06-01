@@ -32,14 +32,12 @@ public class PDFGenerator {
 
     private byte[] htmlToPdf(String html) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-
             PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useFont(() -> getClass().getResourceAsStream("/fonts/NotoSans-Regular.ttf"), "Noto Sans");
             builder.withHtmlContent(html, null);
             builder.toStream(os);
             builder.run();
-
             return os.toByteArray();
-
         } catch (Exception e) {
             throw new RuntimeException("HTML to PDF conversion failed", e);
         }

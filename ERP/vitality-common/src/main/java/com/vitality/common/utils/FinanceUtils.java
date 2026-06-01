@@ -47,7 +47,6 @@ public class FinanceUtils {
         markupPercentage = normalizePercentage(markupPercentage);
         BigDecimal sellingPrice = purchasePrice.add(purchasePrice.multiply(markupPercentage).divide(BigDecimal.valueOf(100),
                 2, RoundingMode.HALF_UP));
-        orderItemPrice.setTotalItemPrice(sellingPrice);
         if (sellingPrice.longValue() > mrp.longValue()) {
             log.info("Selling price with markup: {} is greater than MRP: {}, hence setting selling price as MRP.", sellingPrice, mrp);
             sellingPrice = mrp;
@@ -78,6 +77,7 @@ public class FinanceUtils {
         BigDecimal totalTax = orderItemPrice.getSgstAmount().add(orderItemPrice.getCgstAmount());
         orderItemPrice.setTotalTaxAmount(totalTax);
         BigDecimal totalPrice = sellingPrice.add(totalTax);
+        orderItemPrice.setTotalItemPrice(sellingPrice);
         orderItemPrice.setTotalPrice(totalPrice);
         return orderItemPrice;
     }

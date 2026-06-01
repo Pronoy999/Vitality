@@ -167,7 +167,7 @@ public class OrderService {
         BigDecimal totalPrice = BigDecimal.ZERO;
         BigDecimal itemTotalPrice = BigDecimal.ZERO;
         for (OrderItems item : orderItems) {
-            itemTotalPrice = itemTotalPrice.add(item.getItemPrice());
+            itemTotalPrice = itemTotalPrice.add(item.getItemTotalPrice());
             totalTax = totalTax.add(item.getTotalTaxAmount());
             totalDiscount = totalDiscount.add(item.getItemDiscount());
             totalPrice = totalPrice.add(item.getItemTotalPrice());

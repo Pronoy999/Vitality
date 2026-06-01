@@ -10,13 +10,13 @@ import java.math.BigDecimal;
 public class FinanceUtilsTests {
     @Test
     public void testFinanceUtils() {
-        OrderItemPrice orderItemPrice = FinanceUtils.getOrderItemPrice(BigDecimal.valueOf(100), BigDecimal.valueOf(5), BigDecimal.valueOf(150), BigDecimal.valueOf(2));
+        OrderItemPrice orderItemPrice = FinanceUtils.getOrderItemPrice(BigDecimal.valueOf(100), BigDecimal.valueOf(12), BigDecimal.valueOf(150), BigDecimal.valueOf(2));
         Assertions.assertNotNull(orderItemPrice);
-        Assertions.assertEquals(orderItemPrice.getCgstAmount(), BigDecimal.valueOf(2.55));
-        Assertions.assertEquals(orderItemPrice.getSgstAmount(), BigDecimal.valueOf(2.55));
-        Assertions.assertEquals(BigDecimal.valueOf(2.5), orderItemPrice.getCgstPercentage());
-        Assertions.assertEquals(BigDecimal.valueOf(2.5), orderItemPrice.getSgstPercentage());
+        Assertions.assertEquals(BigDecimal.valueOf(6.12), orderItemPrice.getCgstAmount());
+        Assertions.assertEquals(BigDecimal.valueOf(6.12), orderItemPrice.getSgstAmount());
+        Assertions.assertEquals(BigDecimal.valueOf(6), orderItemPrice.getCgstPercentage());
+        Assertions.assertEquals(BigDecimal.valueOf(6), orderItemPrice.getSgstPercentage());
         Assertions.assertEquals(48.00, orderItemPrice.getTotalDiscount().doubleValue());
-        Assertions.assertEquals(107.10, orderItemPrice.getTotalPrice().doubleValue());
+        Assertions.assertEquals(114.24, orderItemPrice.getTotalPrice().doubleValue());
     }
 }

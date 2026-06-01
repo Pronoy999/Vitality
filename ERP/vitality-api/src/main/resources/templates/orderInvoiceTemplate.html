@@ -6,7 +6,7 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "DejaVu Sans", Arial, sans-serif;
             font-size: 15px;
             margin: 20px;
             color: #333;
@@ -81,7 +81,7 @@
         }
 
         .no-border {
-            width: 50%;
+            width: 55%;
             margin-left: auto;
             margin-top: 20px;
         }
@@ -92,9 +92,21 @@
             font-size: 14px;
         }
 
+        .amount-saved-row {
+            background-color: #dff5e1;
+            color: #1b5e20;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .amount-saved-row td {
+            padding: 10px 6px;
+        }
+
         .total-row {
             font-weight: bold;
             background-color: #f1f8f4;
+            font-size: 16px;
         }
 
         .footer {
@@ -110,9 +122,8 @@
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <div class="rx">℞</div>
+    <div class="rx">&#8478;</div>
 
     <h1 class="brand">Vitality</h1>
 
@@ -127,7 +138,6 @@
     </p>
 </div>
 
-<!-- ORDER DETAILS -->
 <div class="details">
 
     <div class="patient-name">
@@ -151,20 +161,19 @@
 
 </div>
 
-<!-- ITEMS TABLE -->
 <table>
     <thead>
     <tr>
         <th>Description</th>
         <th>Batch No.</th>
-        <th>Expiry Date</th>
-        <th>MRP (₹)</th>
+        <th>Expiry</th>
+        <th>MRP (&#8377;)</th>
         <th>Qty</th>
-        <th>Price (₹)</th>
-        <th>Discount (₹)</th>
-        <th>CGST (₹)</th>
-        <th>SGST (₹)</th>
-        <th>Total (₹)</th>
+        <th>Price (&#8377;)</th>
+        <th>Discount (&#8377;)</th>
+        <th>CGST (&#8377;)</th>
+        <th>SGST (&#8377;)</th>
+        <th>Total (&#8377;)</th>
     </tr>
     </thead>
 
@@ -178,7 +187,7 @@
         <td th:text="${item.batchNumber}">
         </td>
 
-        <td th:text="${item.expiryDate}">
+        <td th:text="${item.expiryDate != null ? #temporals.format(item.expiryDate, 'MM/yyyy') : ''}">
         </td>
 
         <td th:text="${#numbers.formatDecimal(item.mrp, 1, 2)}">
@@ -206,24 +215,23 @@
     </tbody>
 </table>
 
-<!-- TOTALS -->
 <table class="no-border">
 
     <tr>
         <td class="right">
             Total Item Price:
         </td>
-        <td class="right"
-            th:text="${#numbers.formatDecimal(order.totalItemPrice, 1, 2)}">
+        <td class="right">
+            &#8377;<span th:text="${#numbers.formatDecimal(order.totalItemPrice, 1, 2)}"></span>
         </td>
     </tr>
 
-    <tr>
+    <tr class="amount-saved-row">
         <td class="right">
-            Amount saved:
+            🎉 You Saved:
         </td>
-        <td class="right"
-            th:text="${#numbers.formatDecimal(order.totalDiscount, 1, 2)}">
+        <td class="right">
+            &#8377;<span th:text="${#numbers.formatDecimal(order.totalDiscount, 1, 2)}"></span>
         </td>
     </tr>
 
@@ -231,8 +239,8 @@
         <td class="right">
             Total Tax:
         </td>
-        <td class="right"
-            th:text="${#numbers.formatDecimal(order.totalTaxAmount, 1, 2)}">
+        <td class="right">
+            &#8377;<span th:text="${#numbers.formatDecimal(order.totalTaxAmount, 1, 2)}"></span>
         </td>
     </tr>
 
@@ -240,8 +248,8 @@
         <td class="right">
             Platform Fee:
         </td>
-        <td class="right"
-            th:text="${#numbers.formatDecimal(order.platformFee, 1, 2)}">
+        <td class="right">
+            &#8377;<span th:text="${#numbers.formatDecimal(order.platformFee, 1, 2)}"></span>
         </td>
     </tr>
 
@@ -249,8 +257,8 @@
         <td class="right">
             Delivery Fee:
         </td>
-        <td class="right"
-            th:text="${#numbers.formatDecimal(order.deliveryFee, 1, 2)}">
+        <td class="right">
+            &#8377;<span th:text="${#numbers.formatDecimal(order.deliveryFee, 1, 2)}"></span>
         </td>
     </tr>
 
@@ -258,8 +266,8 @@
         <td class="right">
             Round Off:
         </td>
-        <td class="right"
-            th:text="${#numbers.formatDecimal(order.roundOffAmount, 1, 2)}">
+        <td class="right">
+            &#8377;<span th:text="${#numbers.formatDecimal(order.roundOffAmount, 1, 2)}"></span>
         </td>
     </tr>
 
@@ -268,13 +276,12 @@
             <b>Grand Total:</b>
         </td>
         <td class="right">
-            <b th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></b>
+            &#8377;<b th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></b>
         </td>
     </tr>
 
 </table>
 
-<!-- FOOTER -->
 <div class="footer">
     <p>This is a computer-generated invoice.</p>
     <p>Powered by <span class="brand">Vitality</span> | AXON IQ</p>
