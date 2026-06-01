@@ -18,8 +18,9 @@ public class PurchaseOrder extends BaseEntity {
     @Column(name = "po_delivery_date")
     private LocalDate poDeliveryDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status = "PO_GENERATED";
+    private PurchaseOrderStatus status = PurchaseOrderStatus.PO_GENERATED;
 
     @Column(name = "approved_by")
     private String approvedBy;
@@ -52,7 +53,7 @@ public class PurchaseOrder extends BaseEntity {
         }
 
         if (this.status == null) {
-            this.status = "PO_GENERATED";
+            this.status = PurchaseOrderStatus.PO_GENERATED;
         }
 
         if (this.isActive == null) {
