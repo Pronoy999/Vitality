@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 
 @Data
 public class OrderItemInvoice {
@@ -14,4 +15,7 @@ public class OrderItemInvoice {
     private BigDecimal cgstAmount;
     private BigDecimal sgstAmount;
     private BigDecimal itemTotalPrice;
+    private LocalDate expiryDate;
+    private String batchNumber;
+    private BigDecimal mrp;
 }

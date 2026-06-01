@@ -2,6 +2,7 @@ package com.vitality.api.mappers;
 
 import com.vitality.api.entities.*;
 import com.vitality.common.dtos.*;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,7 @@ public class ResponseMappers {
         invoice.setOrderId(first.getOrderId());
         invoice.setOrderDate(first.getOrderDate());
         invoice.setPatientName(first.getFirstName() + " " + first.getLastName());
+        invoice.setPatientPhoneNumber(StringUtils.hasLength(first.getPatientPhoneNumber()) ? first.getPatientPhoneNumber() : "N/A");
         invoice.setTotalItemPrice(first.getTotalItemPrice());
         invoice.setTotalDiscount(first.getTotalDiscount());
         invoice.setTotalTaxAmount(first.getTotalTaxAmount());
@@ -117,11 +119,14 @@ public class ResponseMappers {
             OrderItemInvoice itemInvoice = new OrderItemInvoice();
             itemInvoice.setItemDescription(item.getItemDescription());
             itemInvoice.setQuantity(item.getQuantity());
+            itemInvoice.setMrp(item.getMrp());
             itemInvoice.setItemPrice(item.getItemPrice());
             itemInvoice.setItemDiscount(item.getItemDiscount());
             itemInvoice.setCgstAmount(item.getCgstAmount());
             itemInvoice.setSgstAmount(item.getSgstAmount());
             itemInvoice.setItemTotalPrice(item.getItemTotalPrice());
+            itemInvoice.setExpiryDate(item.getExpiryDate());
+            itemInvoice.setBatchNumber(item.getBatchNumber());
             items.add(itemInvoice);
         });
         invoice.setItems(items);

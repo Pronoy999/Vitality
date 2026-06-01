@@ -11,6 +11,7 @@ public class OrderInvoice {
     private Long orderId;
     private LocalDate orderDate;
     private String patientName;
+    private String patientPhoneNumber;
     private BigDecimal totalItemPrice;
     private BigDecimal totalDiscount;
     private BigDecimal totalTaxAmount;

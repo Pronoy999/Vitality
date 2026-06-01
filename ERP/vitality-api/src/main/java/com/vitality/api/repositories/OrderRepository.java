@@ -17,6 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                     o.id,
                     p.firstName,
                     p.lastName,
+                    p.phoneNumber,
                     o.orderDate,
             
                     o.totalItems,
@@ -34,7 +35,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                     oi.itemDiscount,
                     oi.cgstAmount,
                     oi.sgstAmount,
-                    oi.itemTotalPrice
+                    oi.itemTotalPrice,
+        
+                    i.expiryDate,
+                    i.batchNumber,
+                    i.mrp
                 )
                 from Order o
                 join o.patient p
