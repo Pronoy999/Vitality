@@ -31,6 +31,7 @@ public class OrderService {
     private final InventoryService inventoryService;
     private final PDFGenerator pdfGenerator;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final BigDecimal fixedMarkupPercentage = BigDecimal.valueOf(2);
 
     /**
      * Method to create the Order.
@@ -144,7 +145,8 @@ public class OrderService {
                     orderItem.setQuantity(item.getQuantity());
                     BigDecimal purchasePrice = inventory.getPurchasePrice().multiply(BigDecimal.valueOf(item.getQuantity().longValue()));
                     BigDecimal mrp = inventory.getMrp().multiply(BigDecimal.valueOf(item.getQuantity().longValue()));
-                    OrderItemPrice orderItemPrice = FinanceUtils.getOrderItemPrice(purchasePrice, inventory.getTaxPercentage(), mrp, item.getMarkupPercentage());
+                    BigDecimal markupPercentage = item.getMarkupPercentage() != null ? item.getMarkupPercentage() : fixedMarkupPercentage;
+                    OrderItemPrice orderItemPrice = FinanceUtils.getOrderItemPrice(purchasePrice, inventory.getTaxPercentage(), mrp, markupPercentage);
                     orderItem.setSgstAmount(orderItemPrice.getSgstAmount());
                     orderItem.setSgstPercentage(orderItemPrice.getSgstPercentage());
                     orderItem.setCgstAmount(orderItemPrice.getCgstAmount());

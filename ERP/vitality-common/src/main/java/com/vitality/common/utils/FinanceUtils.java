@@ -4,12 +4,14 @@ import com.vitality.common.dtos.OrderItemPrice;
 import com.vitality.common.dtos.OrderTotalPrice;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public class FinanceUtils {
     /**
      * Method to get the item Price with tax applied and discount subtracted. If discount is null, it will be treated as zero.
@@ -47,6 +49,7 @@ public class FinanceUtils {
                 2, RoundingMode.HALF_UP));
         orderItemPrice.setTotalItemPrice(sellingPrice);
         if (sellingPrice.longValue() > mrp.longValue()) {
+            log.info("Selling price with markup: {} is greater than MRP: {}, hence setting selling price as MRP.", sellingPrice, mrp);
             sellingPrice = mrp;
         } else {
             orderItemPrice.setTotalDiscount(mrp.subtract(sellingPrice));
