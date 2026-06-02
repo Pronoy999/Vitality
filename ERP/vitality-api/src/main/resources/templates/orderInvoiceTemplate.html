@@ -6,7 +6,7 @@
 
     <style>
         body {
-            font-family: "DejaVu Sans", Arial, sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 15px;
             margin: 20px;
             color: #333;
@@ -24,7 +24,7 @@
         }
 
         .rx {
-            font-size: 42px;
+            font-size: 36px;
             color: #2e7d32;
             font-weight: bold;
         }
@@ -80,13 +80,14 @@
             text-align: right;
         }
 
-        .no-border {
+        .totals-table {
             width: 55%;
             margin-left: auto;
             margin-top: 20px;
+            border-collapse: collapse;
         }
 
-        .no-border td {
+        .totals-table td {
             border: none;
             padding: 6px;
             font-size: 14px;
@@ -122,8 +123,10 @@
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-    <div class="rx">&#8478;</div>
+
+    <div class="rx">RX</div>
 
     <h1 class="brand">Vitality</h1>
 
@@ -132,12 +135,12 @@
     </p>
 
     <p class="sub-text">
-        <a href="https://axoniq.in/" class="brand">
-            https://axoniq.in/
-        </a>
+        https://axoniq.in/
     </p>
+
 </div>
 
+<!-- PATIENT / ORDER DETAILS -->
 <div class="details">
 
     <div class="patient-name">
@@ -161,19 +164,20 @@
 
 </div>
 
+<!-- ITEMS -->
 <table>
     <thead>
     <tr>
         <th>Description</th>
         <th>Batch No.</th>
-        <th>Expiry</th>
-        <th>MRP (&#8377;)</th>
+        <th>Expiry Date</th>
+        <th>MRP (Rs.)</th>
         <th>Qty</th>
-        <th>Price (&#8377;)</th>
-        <th>Discount (&#8377;)</th>
-        <th>CGST (&#8377;)</th>
-        <th>SGST (&#8377;)</th>
-        <th>Total (&#8377;)</th>
+        <th>Price (Rs.)</th>
+        <th>Discount (Rs.)</th>
+        <th>CGST (Rs.)</th>
+        <th>SGST (Rs.)</th>
+        <th>Total (Rs.)</th>
     </tr>
     </thead>
 
@@ -187,51 +191,54 @@
         <td th:text="${item.batchNumber}">
         </td>
 
-        <td th:text="${item.expiryDate != null ? item.expiryDate : ''}">
+        <td th:text="${item.expiryDate}">
         </td>
 
-        <td th:text="${#numbers.formatDecimal(item.mrp, 1, 2)}">
+        <td th:text="${item.mrp}">
         </td>
 
         <td th:text="${item.quantity}">
         </td>
 
-        <td th:text="${#numbers.formatDecimal(item.itemPrice, 1, 2)}">
+        <td th:text="${item.itemPrice}">
         </td>
 
-        <td th:text="${#numbers.formatDecimal(item.itemDiscount, 1, 2)}">
+        <td th:text="${item.itemDiscount}">
         </td>
 
-        <td th:text="${#numbers.formatDecimal(item.cgstAmount, 1, 2)}">
+        <td th:text="${item.cgstAmount}">
         </td>
 
-        <td th:text="${#numbers.formatDecimal(item.sgstAmount, 1, 2)}">
+        <td th:text="${item.sgstAmount}">
         </td>
 
-        <td th:text="${#numbers.formatDecimal(item.itemTotalPrice, 1, 2)}">
+        <td th:text="${item.itemTotalPrice}">
         </td>
 
     </tr>
     </tbody>
 </table>
 
-<table class="no-border">
+<!-- TOTALS -->
+<table class="totals-table">
 
     <tr>
         <td class="right">
             Total Item Price:
         </td>
         <td class="right">
-            &#8377;<span th:text="${#numbers.formatDecimal(order.totalItemPrice, 1, 2)}"></span>
+            Rs.
+            <span th:text="${order.totalItemPrice}"></span>
         </td>
     </tr>
 
     <tr class="amount-saved-row">
         <td class="right">
-            🎉 You Saved:
+            AMOUNT SAVED:
         </td>
         <td class="right">
-            &#8377;<span th:text="${#numbers.formatDecimal(order.totalDiscount, 1, 2)}"></span>
+            Rs.
+            <span th:text="${order.totalDiscount}"></span>
         </td>
     </tr>
 
@@ -240,7 +247,8 @@
             Total Tax:
         </td>
         <td class="right">
-            &#8377;<span th:text="${#numbers.formatDecimal(order.totalTaxAmount, 1, 2)}"></span>
+            Rs.
+            <span th:text="${order.totalTaxAmount}"></span>
         </td>
     </tr>
 
@@ -249,7 +257,8 @@
             Platform Fee:
         </td>
         <td class="right">
-            &#8377;<span th:text="${#numbers.formatDecimal(order.platformFee, 1, 2)}"></span>
+            Rs.
+            <span th:text="${order.platformFee}"></span>
         </td>
     </tr>
 
@@ -258,7 +267,8 @@
             Delivery Fee:
         </td>
         <td class="right">
-            &#8377;<span th:text="${#numbers.formatDecimal(order.deliveryFee, 1, 2)}"></span>
+            Rs.
+            <span th:text="${order.deliveryFee}"></span>
         </td>
     </tr>
 
@@ -267,21 +277,24 @@
             Round Off:
         </td>
         <td class="right">
-            &#8377;<span th:text="${#numbers.formatDecimal(order.roundOffAmount, 1, 2)}"></span>
+            Rs.
+            <span th:text="${order.roundOffAmount}"></span>
         </td>
     </tr>
 
     <tr class="total-row">
         <td class="right">
-            <b>Grand Total:</b>
+            GRAND TOTAL:
         </td>
         <td class="right">
-            &#8377;<b th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></b>
+            Rs.
+            <span th:text="${order.totalPrice}"></span>
         </td>
     </tr>
 
 </table>
 
+<!-- FOOTER -->
 <div class="footer">
     <p>This is a computer-generated invoice.</p>
     <p>Powered by <span class="brand">Vitality</span> | AXON IQ</p>
