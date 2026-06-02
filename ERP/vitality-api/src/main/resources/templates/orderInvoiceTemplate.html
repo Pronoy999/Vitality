@@ -187,7 +187,7 @@
         <td th:text="${item.batchNumber}">
         </td>
 
-        <td th:text="${item.expiryDate != null ? #temporals.format(item.expiryDate, 'MM/yyyy') : ''}">
+        <td th:text="${item.expiryDate != null ? item.expiryDate : ''}">
         </td>
 
         <td th:text="${#numbers.formatDecimal(item.mrp, 1, 2)}">
