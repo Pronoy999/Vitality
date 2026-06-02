@@ -84,6 +84,10 @@ public class OrderService {
             return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, "Order ID is required.");
         }
         List<OrderInvoiceView> orderInvoiceView = orderRepository.fetchOrderForInvoice(orderId);
+        if (orderInvoiceView.isEmpty()) {
+            log.error("No Pending order found for ID: {}", orderId);
+            return ResponseGenerator.generateFailureResponse(HttpStatus.NOT_FOUND, "Order not found or already processed.");
+        }
         OrderInvoice orderInvoice = ResponseMappers.mapToOrderInvoice(orderInvoiceView);
         executorService.submit(() -> {
             try {
