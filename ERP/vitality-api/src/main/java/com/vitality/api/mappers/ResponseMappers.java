@@ -4,6 +4,7 @@ import com.vitality.api.entities.*;
 import com.vitality.common.dtos.*;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +121,7 @@ public class ResponseMappers {
             itemInvoice.setItemDescription(item.getItemDescription());
             itemInvoice.setQuantity(item.getQuantity());
             itemInvoice.setMrp(item.getMrp());
-            itemInvoice.setItemPrice(item.getItemPrice());
+            itemInvoice.setItemPrice(item.getMrp().multiply(BigDecimal.valueOf(item.getQuantity().longValue())));
             itemInvoice.setItemDiscount(item.getItemDiscount());
             itemInvoice.setCgstAmount(item.getCgstAmount());
             itemInvoice.setSgstAmount(item.getSgstAmount());

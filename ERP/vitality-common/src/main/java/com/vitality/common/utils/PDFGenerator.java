@@ -33,7 +33,7 @@ public class PDFGenerator {
     private byte[] htmlToPdf(String html) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useFont(() -> getClass().getResourceAsStream("/fonts/NotoSans-Regular.ttf"), "Noto Sans");
+            builder.useFont(() -> PDFGenerator.class.getResourceAsStream("/fonts/NotoSans-Regular.ttf"), "Noto Sans");
             builder.withHtmlContent(html, null);
             builder.toStream(os);
             builder.run();
