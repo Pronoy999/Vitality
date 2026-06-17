@@ -64,7 +64,9 @@ public class PrescriptionService {
         if (!isManual && jobs.containsKey(jobId)) {
             return ResponseGenerator.generateFailureResponse(HttpStatus.NOT_FOUND, "Job not found");
         }
+        log.info("Manual Prescription Data: {}", data);
         CreatePrescriptionRequest request = mapToCreatePrescriptionRequest(data);
+        log.info("Manual Prescription Creation Request: {}", request);
         return persistPrescription(request);
     }
 
