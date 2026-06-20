@@ -12,12 +12,14 @@ import com.vitality.common.utils.FinanceUtils;
 import com.vitality.common.utils.ResponseGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,12 +33,23 @@ import java.util.stream.Collectors;
 public class InventoryService {
     private final InventoryRepository inventoryRepository;
 
-    public ResponseEntity<?> searchInventory(GetInventoryRequest request) {
+    /**
+     * Method to search Inventory based on item description, batch number and expiry date. If no search criteria is provided, it will return the entire inventory.
+     * If the expiring Soon is set, it will only return items which are expiring in next 180 days.
+     *
+     * @param request:        the search criteria for inventory. It can be null to get the entire inventory.
+     * @param isExpiringSoon: the flag to indicate if the search is for expiring soon items. If true, it will only return items which are expiring in next 180 days.
+     * @return the List of {@link Inventory}.
+     */
+    public ResponseEntity<?> searchInventory(GetInventoryRequest request, boolean isExpiringSoon) {
         try {
             List<Inventory> inventoryList;
             if (request != null) {
                 Inventory inventories = inventoryRepository.findByItemDescAndBatchNumberAndExpiryDate(request.getItemDesc(), request.getBatchNumber(), request.getExpiryDate());
                 inventoryList = Collections.singletonList(inventories);
+            } else if (isExpiringSoon) {
+                LocalDate expiringDateThreshold = CommonUtils.getNextSixMonthDate();
+                inventoryList = inventoryRepository.findExpiringInventory(expiringDateThreshold, PageRequest.of(0, 10));
             } else {
                 inventoryList = getEntireInventory();
             }

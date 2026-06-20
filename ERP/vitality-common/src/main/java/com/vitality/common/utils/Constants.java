@@ -18,6 +18,7 @@ public class Constants {
     public static final String INVOICE_UPLOAD_PATH = INVOICE_PATH + "/upload";
     public static final String INVOICE_STATUS_PATH = INVOICE_PATH + "/status/{jobId}";
     public static final String INVENTORY_PATH = VITALITY_API_BASE_PATH + "/inventory";
+    public static final String INVENTORY_EXPIRING_PATH = INVENTORY_PATH + "/expiring";
     public static final String ORDER_PATH = VITALITY_API_BASE_PATH + "/order";
     public static final String ORDER_INVOICE_PATH = "/invoice/{orderId}";
     public static final String PURCHASE_ORDER_PATH = VITALITY_API_BASE_PATH + "/purchase-order";

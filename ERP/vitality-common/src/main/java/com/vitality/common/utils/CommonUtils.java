@@ -108,4 +108,13 @@ public class CommonUtils {
         }
         return Paths.get(originalFilename).getFileName().toString();
     }
+
+    /**
+     * Method to get the next six month date from the current date.
+     *
+     * @return the next six month date from the current date.
+     */
+    public static LocalDate getNextSixMonthDate() {
+        return LocalDate.now().plusMonths(6);
+    }
 }
