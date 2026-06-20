@@ -101,9 +101,19 @@ public class ValidatorsTests {
         @Test
         @DisplayName("Should throw exception when customer phone provided without first name but with last name")
         void testCustomerPhoneWithoutFirstName() {
-            validRequest.setCustomerFirstName("");
+            validRequest.setCustomerFirstName("FirstName");
             validRequest.setCustomerLastName("Smith");
             assertDoesNotThrow(() -> Validators.validatePrescriptionCreateRequest(validRequest));
+        }
+
+        @Test
+        @DisplayName("Should throw exception when customer phone provided without last name but with first name")
+        void testCustomerPhoneWithoutLastName() {
+            validRequest.setCustomerFirstName("Jane");
+            validRequest.setCustomerLastName("");
+            InvalidRequestException exception = assertThrows(InvalidRequestException.class,
+                    () -> Validators.validatePrescriptionCreateRequest(validRequest));
+            assertEquals("Customer first name or last name is required when customer phone number is provided.", exception.getMessage());
         }
 
         @Test
