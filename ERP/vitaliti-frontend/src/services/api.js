@@ -7,8 +7,7 @@ const API_PATHS = {
   orderInvoice: (orderId) => `/api/v1/vitality/order/invoice/${orderId}`,
   uploadPrescription: '/api/v1/vitality/prescription/upload',
   prescriptionStatus: (jobId) => `/api/v1/vitality/prescription/status/${jobId}`,
-  confirmPrescription: (jobId) => `/api/v1/vitality/prescription/confirm/${jobId}`,
-  manualPrescription: '/api/v1/vitality/prescription/manual',
+  createPrescription: '/api/v1/vitality/prescription',
   uploadInvoice: '/api/v1/vitality/invoice/upload',
   invoiceStatus: (jobId) => `/api/v1/vitality/invoice/status/${jobId}`,
   invoice: '/api/v1/vitality/invoice',
@@ -118,14 +117,10 @@ export function getPrescriptionStatus(jobId) {
   return apiFetch(API_PATHS.prescriptionStatus(jobId))
 }
 
-export function saveReviewedPrescription({ jobId, data }) {
-  const path = jobId
-    ? API_PATHS.confirmPrescription(jobId)
-    : API_PATHS.manualPrescription
-
-  return apiFetch(path, {
+export function saveReviewedPrescription({ data }) {
+  return apiFetch(API_PATHS.createPrescription, {
     method: 'POST',
-    body: JSON.stringify({ data }),
+    body: JSON.stringify(data),
   })
 }
 

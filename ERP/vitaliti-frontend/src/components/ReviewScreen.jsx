@@ -338,6 +338,11 @@ function normalizeInitialData(initialData) {
     customer_last_name: customerLastName,
     customer_phone_country_code: customerPhone.countryCode,
     customer_phone_number: customerPhone.number,
+    medicines: (initialData?.medicines || []).map(medicine => ({
+      ...medicine,
+      startDate: medicine?.startDate || initialData?.date || TODAY,
+      endDate: medicine?.endDate || '',
+    })),
   }
 }
 
@@ -346,10 +351,107 @@ function splitPatientName(fullName) {
   if (!trimmed) {
     return { firstName: '', lastName: '' }
   }
-  const [firstName, ...rest] = trimmed.split(/\s+/)
+  const parts = trimmed.split(/\s+/)
   return {
-    firstName,
-    lastName: rest.join(' '),
+    firstName: parts.slice(0, -1).join(' '),
+    lastName: parts.slice(-1).join(' '),
+  }
+}
+
+function hasValue(value) {
+  if (value == null) {
+    return false
+  }
+  if (typeof value === 'string') {
+    return value.trim() !== ''
+  }
+  return true
+}
+
+function setIfPresent(target, key, value) {
+  if (hasValue(value)) {
+    target[key] = value
+  }
+}
+
+function buildHealthParameters(metrics) {
+  return Object.entries(metrics || {})
+    .map(([key, value]) => [key?.trim(), value?.trim()])
+    .filter(([key, value]) => key && value)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(', ')
+}
+
+function buildPrescriptionDiagnoses(medicines, diagnosis) {
+  return (medicines || [])
+    .map(medicine => {
+      const item = {}
+      setIfPresent(item, 'diagnosis', diagnosis)
+      setIfPresent(item, 'medicineName', medicine?.name)
+      setIfPresent(item, 'dosage', medicine?.dosage)
+      setIfPresent(item, 'startDate', medicine?.startDate)
+      setIfPresent(item, 'endDate', medicine?.endDate)
+
+      if (medicine?.quantity !== '' && medicine?.quantity != null) {
+        const unit = parseInt(medicine.quantity, 10)
+        if (!Number.isNaN(unit)) {
+          item.unit = unit
+        }
+      }
+
+      return item
+    })
+    .filter(item => Object.keys(item).length > 0)
+}
+
+function buildReviewedPrescriptionPayload(data, isFillingForSomeoneElse) {
+  const patientPhoneNumber = buildPhoneValue(data.patient_phone_country_code, data.patient_phone_number)
+  const patientName = (data.patient_name || '').trim()
+  const { firstName, lastName } = splitPatientName(patientName)
+  const yourName = (data.your_name || '').trim()
+  const { firstName: customerFirstName, lastName: customerLastName } = splitPatientName(yourName)
+  const customerPhoneNumber = isFillingForSomeoneElse
+    ? buildPhoneValue(data.customer_phone_country_code, data.customer_phone_number)
+    : ''
+  const diagnosis = (data.diagnosis || '').trim()
+  const prescriptionDate = (data.date || '').trim()
+  const healthParameters = buildHealthParameters(data.health_metrics)
+  const prescriptionDiagnoses = buildPrescriptionDiagnoses(
+    (data.medicines || []).map(medicine => ({
+      ...medicine,
+      startDate: medicine?.startDate || prescriptionDate,
+    })),
+    diagnosis,
+  )
+  const payload = {}
+
+  setIfPresent(payload, 'firstName', firstName)
+  setIfPresent(payload, 'lastName', lastName)
+  setIfPresent(payload, 'patientPhoneNumber', patientPhoneNumber)
+  setIfPresent(payload, 'age', data.patient_age !== '' && data.patient_age != null ? parseInt(data.patient_age, 10) : null)
+  setIfPresent(payload, 'prescriptionDate', prescriptionDate)
+  setIfPresent(payload, 'referredByDoctor', data.doctor_name)
+  setIfPresent(payload, 'diagnosis', diagnosis)
+  setIfPresent(payload, 'healthParameters', healthParameters)
+
+  if (isFillingForSomeoneElse) {
+    setIfPresent(payload, 'customerFirstName', customerFirstName)
+    setIfPresent(payload, 'customerLastName', customerLastName)
+    setIfPresent(payload, 'customerPhoneNumber', customerPhoneNumber)
+  }
+
+  if (prescriptionDiagnoses.length > 0) {
+    payload.prescriptionDiagnoses = prescriptionDiagnoses
+  }
+
+  return {
+    payload,
+    patientPhoneNumber,
+    customerPhoneNumber,
+    patientFirstName: firstName,
+    patientLastName: lastName,
+    customerFirstName,
+    customerLastName,
   }
 }
 
@@ -482,7 +584,7 @@ export default function ReviewScreen({ jobId, initialData, onConfirmed, onReset 
   function addMed() {
     setData(current => ({
       ...current,
-      medicines: [...(current.medicines || []), { name: '', dosage: '', quantity: null }],
+      medicines: [...(current.medicines || []), { name: '', dosage: '', quantity: null, startDate: TODAY, endDate: '' }],
     }))
   }
 
@@ -507,14 +609,15 @@ export default function ReviewScreen({ jobId, initialData, onConfirmed, onReset 
   }
 
   async function confirm() {
-    const patientPhoneNumber = buildPhoneValue(data.patient_phone_country_code, data.patient_phone_number)
-    const patientName = (data.patient_name || '').trim()
-    const { firstName: patientFirstName, lastName: patientLastName } = splitPatientName(patientName)
-    const yourName = (data.your_name || '').trim()
-    const { firstName: customerFirstName, lastName: customerLastName } = splitPatientName(yourName)
-    const customerPhoneNumber = isFillingForSomeoneElse
-      ? buildPhoneValue(data.customer_phone_country_code, data.customer_phone_number)
-      : ''
+    const {
+      payload,
+      patientPhoneNumber,
+      customerPhoneNumber,
+      patientFirstName,
+      patientLastName,
+      customerFirstName,
+      customerLastName,
+    } = buildReviewedPrescriptionPayload(data, isFillingForSomeoneElse)
 
     if (!patientPhoneNumber && !customerPhoneNumber) {
       setMessage({ tone: 'error', text: 'Add at least one phone number: patient or customer.' })
@@ -537,25 +640,7 @@ export default function ReviewScreen({ jobId, initialData, onConfirmed, onReset 
     setMessage(null)
 
     try {
-      const payload = {
-        ...data,
-        patient_age: data.patient_age !== '' && data.patient_age != null ? parseInt(data.patient_age, 10) : null,
-        patient_name: patientName,
-        patient_phone_number: patientPhoneNumber,
-        customer_phone_number: customerPhoneNumber,
-        firstName: patientFirstName,
-        lastName: patientLastName,
-        patientPhoneNumber,
-        customerFirstName: isFillingForSomeoneElse ? customerFirstName : '',
-        customerLastName: isFillingForSomeoneElse ? customerLastName : '',
-        customerPhoneNumber,
-        medicines: (data.medicines || []).map(medicine => ({
-          ...medicine,
-          quantity: medicine.quantity !== '' && medicine.quantity != null ? parseInt(medicine.quantity, 10) : null,
-        })),
-      }
-
-      const result = await saveReviewedPrescription({ jobId, data: payload })
+      const result = await saveReviewedPrescription({ data: payload })
       onConfirmed(result.prescription_id)
     } catch (error) {
       alert('Error: ' + error.message)
@@ -692,6 +777,8 @@ export default function ReviewScreen({ jobId, initialData, onConfirmed, onReset 
               <th style={s.th}>Name</th>
               <th style={s.th}>Dosage</th>
               <th style={{ ...s.th, width: 80 }}>Qty</th>
+              <th style={s.th}>Start Date</th>
+              <th style={s.th}>End Date</th>
               <th style={{ ...s.th, width: 48 }}></th>
             </tr>
           </thead>
@@ -726,6 +813,26 @@ export default function ReviewScreen({ jobId, initialData, onConfirmed, onReset 
                     placeholder="-"
                     min="0"
                     onChange={event => setMed(index, 'quantity', event.target.value)}
+                    onFocus={event => { event.target.style.borderBottomColor = 'var(--ink)' }}
+                    onBlur={event => { event.target.style.borderBottomColor = 'transparent' }}
+                  />
+                </td>
+                <td style={s.td}>
+                  <input
+                    style={s.tdInput}
+                    type="date"
+                    value={medicine.startDate || ''}
+                    onChange={event => setMed(index, 'startDate', event.target.value)}
+                    onFocus={event => { event.target.style.borderBottomColor = 'var(--ink)' }}
+                    onBlur={event => { event.target.style.borderBottomColor = 'transparent' }}
+                  />
+                </td>
+                <td style={s.td}>
+                  <input
+                    style={s.tdInput}
+                    type="date"
+                    value={medicine.endDate || ''}
+                    onChange={event => setMed(index, 'endDate', event.target.value)}
                     onFocus={event => { event.target.style.borderBottomColor = 'var(--ink)' }}
                     onBlur={event => { event.target.style.borderBottomColor = 'transparent' }}
                   />
