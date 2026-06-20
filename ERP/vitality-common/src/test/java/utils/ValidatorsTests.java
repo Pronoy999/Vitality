@@ -95,7 +95,7 @@ public class ValidatorsTests {
             validRequest.setCustomerLastName("");
             InvalidRequestException exception = assertThrows(InvalidRequestException.class,
                     () -> Validators.validatePrescriptionCreateRequest(validRequest));
-            assertEquals("Customer first name or last name is required when customer phone number is provided.", exception.getMessage());
+            assertEquals("Customer first name and last name is required when customer phone number is provided.", exception.getMessage());
         }
 
         @Test
@@ -113,7 +113,7 @@ public class ValidatorsTests {
             validRequest.setCustomerLastName("");
             InvalidRequestException exception = assertThrows(InvalidRequestException.class,
                     () -> Validators.validatePrescriptionCreateRequest(validRequest));
-            assertEquals("Customer first name or last name is required when customer phone number is provided.", exception.getMessage());
+            assertEquals("Customer first name and last name is required when customer phone number is provided.", exception.getMessage());
         }
 
         @Test
