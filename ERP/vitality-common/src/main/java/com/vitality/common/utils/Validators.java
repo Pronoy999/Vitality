@@ -28,7 +28,7 @@ public class Validators {
             throw new InvalidRequestException("Customer phone number cannot be the same as patient phone number.");
         }
         if (StringUtils.hasLength(request.getCustomerPhoneNumber()) &&
-                (!StringUtils.hasLength(request.getCustomerFirstName())) || !StringUtils.hasLength(request.getCustomerLastName())) {
+                (!StringUtils.hasLength(request.getCustomerFirstName())) && !StringUtils.hasLength(request.getCustomerLastName())) {
             throw new InvalidRequestException("Customer first name or last name is required when customer phone number is provided.");
         }
         if (request.getFirstName() == null || !StringUtils.hasLength(request.getFirstName())) {
