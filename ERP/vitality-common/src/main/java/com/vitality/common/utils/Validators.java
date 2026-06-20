@@ -29,7 +29,7 @@ public class Validators {
         }
         if (StringUtils.hasLength(request.getCustomerPhoneNumber()) &&
                 (!StringUtils.hasLength(request.getCustomerFirstName())) || !StringUtils.hasLength(request.getCustomerLastName())) {
-            throw new InvalidRequestException("Customer first name or last name is required when customer phone number is provided.");
+            throw new InvalidRequestException("Customer first name and last name is required when customer phone number is provided.");
         }
         if (request.getFirstName() == null || !StringUtils.hasLength(request.getFirstName())) {
             throw new InvalidRequestException("Patient first name is required.");
