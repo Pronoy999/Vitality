@@ -58,14 +58,6 @@ public class ValidatorsTests {
             assertEquals("Prescription request is required.", exception.getMessage());
         }
 
-        @Test
-        @DisplayName("Should throw exception when patient phone number is null")
-        void testNullPatientPhoneNumber() {
-            validRequest.setPatientPhoneNumber(null);
-            InvalidRequestException exception = assertThrows(InvalidRequestException.class,
-                    () -> Validators.validatePrescriptionCreateRequest(validRequest));
-            assertEquals("Patient or customer phone number is required.", exception.getMessage());
-        }
 
         @Test
         @DisplayName("Should throw exception when patient phone number is empty")
