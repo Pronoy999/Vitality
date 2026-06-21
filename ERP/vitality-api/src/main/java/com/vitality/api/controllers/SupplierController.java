@@ -1,7 +1,7 @@
 package com.vitality.api.controllers;
 
-import com.vitality.api.service.PurchaseOrderService;
-import com.vitality.common.dtos.CreatePurchaseOrderRequest;
+import com.vitality.api.service.SupplierService;
+import com.vitality.common.dtos.CreateSupplierRequest;
 import com.vitality.common.dtos.JwtValidationResult;
 import com.vitality.common.utils.Constants;
 import com.vitality.common.utils.SecurityUtils;
@@ -14,29 +14,29 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
-@RestController("purchaseOrderController")
-@RequestMapping(Constants.PURCHASE_ORDER_PATH)
-public class PurchaseOrderController {
+@RestController("supplierController")
+@RequestMapping(Constants.SUPPLIER_PATH)
+public class SupplierController {
 
+    private final SupplierService supplierService;
     private final SecurityUtils securityUtils;
-    private final PurchaseOrderService purchaseOrderService;
 
     @GetMapping
-    public ResponseEntity<?> getPendingPurchaseOrders(@RequestHeader Map<String, String> httpHeaders) {
-        log.info("Received Purchase Order GET Request.");
+    public ResponseEntity<?> getSuppliers(@RequestHeader Map<String, String> httpHeaders) {
+        log.info("Received Supplier GET Request.");
         JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
         if (validationResult.valid()) {
-            return purchaseOrderService.getPendingPurchaseOrders();
+            return supplierService.getSuppliers();
         }
         return validationResult.errorResponse();
     }
 
     @PostMapping
-    public ResponseEntity<?> createPurchaseOrder(@RequestBody CreatePurchaseOrderRequest request, @RequestHeader Map<String, String> httpHeaders) {
-        log.info("Received Purchase Order Creation Request");
+    public ResponseEntity<?> createSupplier(@RequestBody CreateSupplierRequest request, @RequestHeader Map<String, String> httpHeaders) {
+        log.info("Received Supplier Creation Request");
         JwtValidationResult validationResult = securityUtils.validateRequest(httpHeaders);
         if (validationResult.valid()) {
-            return purchaseOrderService.createPurchaseOrder(request);
+            return supplierService.createSupplier(request);
         }
         return validationResult.errorResponse();
     }

@@ -8,10 +8,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tbl_purchase_order_items", schema = "vitality")
+@Table(name = "tbl_purchase_order_items")
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class PurchaseOrderItem extends BaseEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "po_id", nullable = false)
+    private PurchaseOrder purchaseOrder;
 
     @Column(name = "item_desc", nullable = false)
     private String itemDesc;
@@ -30,10 +34,6 @@ public class PurchaseOrderItem extends BaseEntity {
 
     @Column(name = "updated_timestamp", nullable = false)
     private LocalDateTime updatedTimestamp;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "po_id", nullable = false)
-    private PurchaseOrder purchaseOrder;
 
 
     @PrePersist

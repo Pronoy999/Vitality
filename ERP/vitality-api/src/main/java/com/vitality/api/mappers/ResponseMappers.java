@@ -148,4 +148,18 @@ public class ResponseMappers {
         request.setPrescriptionDiagnoses(toDiagnosisRequests(data));
         return request;
     }
+
+    public static List<GetSuppliersResponse> mapToGetSuppliersResponse(List<Supplier> suppliers) {
+        List<GetSuppliersResponse> supplierResponses = suppliers.stream().map(supplier -> {
+            GetSuppliersResponse supplierResponse = new GetSuppliersResponse();
+            supplierResponse.setSupplierId(supplier.getId());
+            supplierResponse.setSupplierName(supplier.getSupplierName());
+            supplierResponse.setPocName(supplier.getPocName());
+            supplierResponse.setPocContact(supplier.getPocContact());
+            supplierResponse.setSupplierAddress(supplier.getSupplierAddress());
+            supplierResponse.setEstimateDeliveryInDays(supplier.getEstimateDeliveryInDays());
+            return supplierResponse;
+        }).toList();
+        return supplierResponses;
+    }
 }

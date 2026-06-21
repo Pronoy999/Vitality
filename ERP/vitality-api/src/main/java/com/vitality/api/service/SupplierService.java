@@ -1,12 +1,19 @@
 package com.vitality.api.service;
 
 import com.vitality.api.entities.Supplier;
+import com.vitality.api.mappers.ResponseMappers;
 import com.vitality.api.repositories.SupplierRepository;
 import com.vitality.common.dtos.CreateSupplierRequest;
+import com.vitality.common.dtos.CreateSupplierResponse;
+import com.vitality.common.dtos.GetSuppliersResponse;
 import com.vitality.common.exceptions.InvalidRequestException;
+import com.vitality.common.utils.ResponseGenerator;
+import com.vitality.common.utils.Validators;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +37,29 @@ public class SupplierService {
         return supplierRepository.searchBySupplierName(supplierName);
     }
 
+    public ResponseEntity<?> getSuppliers() {
+        List<Supplier> suppliers = supplierRepository.findAll();
+        List<GetSuppliersResponse> responses = ResponseMappers.mapToGetSuppliersResponse(suppliers);
+        return ResponseGenerator.generateSuccessResponse(responses, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> createSupplier(CreateSupplierRequest request) {
+        try {
+            Validators.validateSupplierRequest(request);
+            Supplier supplier = doCreateSupplier(request);
+            CreateSupplierResponse response = new CreateSupplierResponse();
+            response.setSupplierId(supplier.getId());
+            response.setSupplierName(supplier.getSupplierName());
+            return ResponseGenerator.generateSuccessResponse(response, HttpStatus.CREATED);
+        } catch (InvalidRequestException e) {
+            log.error("Invalid Request Error: {}", e.getMessage());
+            return ResponseGenerator.generateFailureResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Error: {}", e.getMessage());
+            return ResponseGenerator.generateFailureResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create supplier. Please try again later.");
+        }
+    }
+
     /**
      * Method to create the supplier.
      *
@@ -46,9 +76,10 @@ public class SupplierService {
             }
             Supplier supplier = new Supplier();
             supplier.setSupplierName(request.getSupplierName());
-            supplier.setPocContact(request.getPocName());
+            supplier.setPocName(request.getPocName());
             supplier.setPocContact(request.getPocPhone());
             supplier.setSupplierAddress(request.getSupplierAddress());
+            supplier.setEstimateDeliveryInDays(request.getEstimateDeliveryInDays());
             supplier.setIsActive(true);
             try {
                 supplier = supplierRepository.save(supplier);

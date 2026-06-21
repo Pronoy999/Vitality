@@ -1,12 +1,15 @@
 package com.vitality.api.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "tbl_purchase_order", schema = "vitality")
+@Table(name = "tbl_purchase_order")
+@Data
 public class PurchaseOrder extends BaseEntity {
 
     @Column(name = "po_number")
@@ -42,6 +45,8 @@ public class PurchaseOrder extends BaseEntity {
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
+    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PurchaseOrderItem> purchaseOrderItems;
 
     @PrePersist
     protected void onCreate() {

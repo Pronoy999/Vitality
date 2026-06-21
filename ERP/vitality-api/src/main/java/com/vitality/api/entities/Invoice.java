@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_invoice", schema = "vitality")
+@Table(name = "tbl_invoice")
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class Invoice extends BaseEntity {

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tbl_supplier", schema = "vitality")
+@Table(name = "tbl_supplier")
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Supplier extends BaseEntity {

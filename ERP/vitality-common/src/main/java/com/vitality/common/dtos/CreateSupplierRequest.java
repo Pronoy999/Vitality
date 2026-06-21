@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -17,5 +18,5 @@ public class CreateSupplierRequest {
     private String supplierAddress;
     private String pocName;
     private String pocPhone;
-    private LocalDate estimateDeliveryInDays;
+    private BigDecimal estimateDeliveryInDays;
 }

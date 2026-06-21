@@ -115,4 +115,52 @@ public class Validators {
             throw new InvalidRequestException("Order items cannot be empty");
         }
     }
+
+    /**
+     * Method to validate a Purchase Order Request.
+     *
+     * @param request: the request to validate.
+     */
+    public static void validatePurchaseOrderRequest(CreatePurchaseOrderRequest request) {
+        if (Objects.isNull(request)) {
+            throw new InvalidRequestException("Purchase order request cannot be null");
+        }
+        if (Objects.isNull(request.getItems()) || request.getItems().isEmpty()) {
+            throw new InvalidRequestException("At least one purchase order item is required.");
+        }
+        if (request.getSupplierId() == null) {
+            throw new InvalidRequestException("Supplier ID is required");
+        }
+        if (request.getPurchaseOrderDeliveryDate() == null) {
+            throw new InvalidRequestException("Delivery Date is required.");
+        }
+        for (int i = 0; i < request.getItems().size(); i++) {
+            CreatePurchaseOrderItems item = request.getItems().get(i);
+            String prefix = "Purchase order item " + (i + 1) + ": ";
+            if (item == null) {
+                throw new InvalidRequestException(prefix + "details are required.");
+            }
+            if (!StringUtils.hasLength(item.getItemDesc())) {
+                throw new InvalidRequestException(prefix + "description is required.");
+            }
+            if (Objects.isNull(item.getItemQty())) {
+                throw new InvalidRequestException(prefix + "quantity must be greater than zero.");
+            }
+        }
+    }
+
+    public static void validateSupplierRequest(CreateSupplierRequest request) {
+        if (Objects.isNull(request)) {
+            throw new InvalidRequestException("Supplier request cannot be null");
+        }
+        if (!StringUtils.hasLength(request.getSupplierName())) {
+            throw new InvalidRequestException("Supplier name is required.");
+        }
+        if (!StringUtils.hasLength(request.getPocName())) {
+            throw new InvalidRequestException("Point of contact name is required.");
+        }
+        if (!StringUtils.hasLength(request.getPocPhone())) {
+            throw new InvalidRequestException("Point of contact phone number is required.");
+        }
+    }
 }

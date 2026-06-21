@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -116,5 +117,28 @@ public class CommonUtils {
      */
     public static LocalDate getNextSixMonthDate() {
         return LocalDate.now().plusMonths(6);
+    }
+
+    /**
+     * Method to generate a Purchase Order number with the format "vitality-po-yyyyMMdd-<uniquePart>" where uniquePart is a random UUID substring.
+     *
+     * @return The generated Purchase Order number.
+     */
+    public static String generatePurchaseOrderNumber() {
+        DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String prefix = "vitality-po-";
+        String datePart = LocalDate.now().format(DATE_FORMAT);
+        String uniquePart = String.valueOf((int) (Math.random() * 9900) + 100);
+        return prefix + datePart + "-" + uniquePart;
+    }
+
+    /**
+     * Method to get the current System date in the format of YYYY-MM-DD
+     *
+     * @return the current date.
+     */
+    public static String getCurrentDate() {
+        DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.now().format(DATE_FORMAT);
     }
 }

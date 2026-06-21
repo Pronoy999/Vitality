@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "tbl_inventory", schema = "vitality")
+@Table(name = "tbl_inventory")
 @Data
 public class Inventory extends BaseEntity {
 
