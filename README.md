@@ -11,3 +11,5 @@ docker run -d \
 
 
   
+# API Docs:
+https://documenter.getpostman.com/view/5329722/2sBXirkUC7
