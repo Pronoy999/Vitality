@@ -17,5 +17,5 @@ create table vitality.tbl_patient_vitals
 alter table vitality.tbl_patient_vitals
     add constraint fk_patient_id
         foreign key (patient_id)
-            references vitality.tbl_patients (guid);
+            references vitality.tbl_users (guid);
 create index patient_vital_idx on vitality.tbl_patient_vitals (sid, patient_id);
