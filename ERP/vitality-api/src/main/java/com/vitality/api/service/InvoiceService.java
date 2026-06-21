@@ -1,9 +1,6 @@
 package com.vitality.api.service;
 
-import com.vitality.api.entities.Invoice;
-import com.vitality.api.entities.InvoiceItem;
-import com.vitality.api.entities.InvoiceStatus;
-import com.vitality.api.entities.Supplier;
+import com.vitality.api.entities.*;
 import com.vitality.api.mappers.ResponseMappers;
 import com.vitality.api.repositories.InvoiceRepository;
 import com.vitality.common.dtos.*;
@@ -31,6 +28,7 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final SupplierService supplierService;
     private final InventoryService inventoryService;
+    private final PurchaseOrderService purchaseOrderService;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /**
@@ -57,7 +55,10 @@ public class InvoiceService {
         if (invoice.getStatus().equals(InvoiceStatus.INVOICE_DELIVERED)) {
             log.info("Invoice Items are delivered, hence Updating Inventory.");
             Invoice finalInvoice = invoice;
-            executorService.submit(() -> inventoryService.updateInventory(finalInvoice));
+            executorService.submit(() -> {
+                purchaseOrderService.updatePurchaseOrderStatus(finalInvoice.getPurchaseOrder().getId(), PurchaseOrderStatus.DELIVERED);
+                inventoryService.updateInventory(finalInvoice);
+            });
         }
         CreateInvoiceResponse response = new CreateInvoiceResponse(invoice.getId());
         return ResponseGenerator.generateSuccessResponse(response, HttpStatus.CREATED);

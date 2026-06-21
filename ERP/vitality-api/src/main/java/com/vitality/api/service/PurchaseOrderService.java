@@ -45,6 +45,11 @@ public class PurchaseOrderService {
         return ResponseGenerator.generateSuccessResponse(pendingPurchaseOrders, HttpStatus.OK);
     }
 
+    public void updatePurchaseOrderStatus(Long purchaseOrderId, PurchaseOrderStatus status) {
+        int rowsAffected = purchaseOrderRepository.updatePurchaseOrderStatus(purchaseOrderId, status);
+        log.info("Updated purchase order status for purchaseOrderId: {} to status: {}. Rows affected: {}", purchaseOrderId, status, rowsAffected);
+    }
+
     /**
      * Method to create the Purchase Order.
      *
